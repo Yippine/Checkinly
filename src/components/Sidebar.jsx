@@ -1,0 +1,100 @@
+import React, { useState } from 'react';
+import { LayoutDashboard, FileText, Users, Settings, X } from 'lucide-react';
+
+const Sidebar = ({ isOpen = true, onClose }) => {
+  const [activeItem, setActiveItem] = useState(0);
+
+  const navItems = [
+    { icon: LayoutDashboard, label: '儀表板' },
+    { icon: FileText, label: '出勤明細' },
+    { icon: Users, label: '員工管理' },
+    { icon: Settings, label: '設定' },
+  ];
+
+  return (
+    <>
+      {/* Mobile Overlay */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-modal-backdrop lg:hidden transition-opacity duration-300"
+          onClick={onClose}
+          aria-hidden="true"
+        />
+      )}
+
+      {/* Sidebar */}
+      <aside
+        className={`
+          fixed left-0 top-0 h-full w-64 bg-white border-r border-border-light z-modal shadow-drawer
+          transition-transform duration-300 ease-ant
+          lg:translate-x-0
+          ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+        `}
+        role="navigation"
+        aria-label="主導航"
+      >
+        {/* Close Button (Mobile Only) */}
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 p-2 text-text-tertiary hover:text-text-primary hover:bg-neutral-50 rounded-lg transition-all duration-150 lg:hidden focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+          aria-label="關閉選單"
+        >
+          <X size={20} />
+        </button>
+
+        {/* Logo Header */}
+        <div className="h-16 flex items-center px-6 border-b border-border-light bg-white">
+          <div className="bg-primary-500 p-2 rounded-lg text-white shadow-sm transition-transform duration-200 hover:scale-110">
+            <LayoutDashboard size={18} />
+          </div>
+          <h1 className="ml-3 text-base font-semibold text-text-primary">工時分析系統</h1>
+        </div>
+
+        {/* Navigation Items */}
+        <nav className="mt-4 px-3">
+          {navItems.map((item, idx) => {
+            const Icon = item.icon;
+            const isActive = idx === activeItem;
+            return (
+              <button
+                key={idx}
+                onClick={() => setActiveItem(idx)}
+                className={`
+                  w-full px-3 py-2 mb-1 flex items-center gap-3 rounded-lg
+                  transition-all duration-150 ease-in-out text-sm font-medium
+                  focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2
+                  ${isActive
+                    ? 'bg-primary-50 text-primary-600 font-semibold'
+                    : 'text-text-secondary hover:bg-neutral-50 hover:text-text-primary'
+                  }
+                `}
+                aria-current={isActive ? 'page' : undefined}
+              >
+                <Icon
+                  size={20}
+                  className={`transition-colors duration-150 ${isActive ? 'text-primary-500' : 'text-text-tertiary'}`}
+                />
+                <span>{item.label}</span>
+              </button>
+            );
+          })}
+        </nav>
+
+      {/* Bottom Section (Optional) */}
+      <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-border-light">
+        <div className="flex items-center gap-3 px-3 py-2">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white text-xs font-semibold">
+            HR
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium text-text-primary truncate">HR Manager</p>
+            <p className="text-xs text-text-tertiary">系統管理員</p>
+          </div>
+        </div>
+      </div>
+      </aside>
+    </>
+  );
+};
+
+export default Sidebar;
