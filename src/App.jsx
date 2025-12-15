@@ -17,6 +17,7 @@ import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import GlobalLoader from './components/GlobalLoader';
 import { KPISkeleton, ChartSkeleton } from './components/Skeleton';
+import AttendanceTable from './components/AttendanceTable';
 
 // --- Main Application ---
 
@@ -27,6 +28,7 @@ export default function App() {
   const [fileName, setFileName] = useState('');
   const [error, setError] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState('dashboard'); // RouteSystem: State(activeTab)
 
   // Ant Design Pro Color Palette
   const COLORS = ['#1890ff', '#52c41a', '#faad14', '#f5222d', '#722ed1', '#eb2f96'];
@@ -79,7 +81,7 @@ export default function App() {
   return (
     <div className="min-h-screen bg-neutral-50 font-sans">
       <GlobalLoader isLoading={loading} />
-      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} activeTab={activeTab} setActiveTab={setActiveTab} />
       <Header fileName={fileName} onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
 
       {/* Main Content */}
@@ -131,10 +133,12 @@ export default function App() {
           )}
         </div>
 
-        {/* Dashboard Content - Always Show Structure */}
-        {!data ? (
-          /* Empty State with Skeleton */
-          <div className="space-y-6 animate-fade-in">
+        {/* RouteSystem: View(Dashboard | AttendanceDetail) + Animation(fade_in) */}
+        {activeTab === 'dashboard' ? (
+          /* Dashboard View */
+          !data ? (
+            /* Empty State with Skeleton */
+            <div className="space-y-6 animate-fade-in">
             {/* KPI Cards Skeleton */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
               <KPISkeleton />
@@ -197,8 +201,8 @@ export default function App() {
               </div>
             </Card>
           </div>
-        ) : stats ? (
-          <div className="space-y-6 animate-fade-in">
+          ) : stats ? (
+            <div className="space-y-6 animate-fade-in">
             {/* KPI Cards - Enhanced with semantic colors and trend indicators */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
               <StatCard
@@ -454,7 +458,11 @@ export default function App() {
               </div>
             </div>
           </div>
-        ) : null}
+          ) : null
+        ) : (
+          /* AttendanceTable View */
+          <AttendanceTable data={data || []} />
+        )}
 
         {/* Loading Indicator */}
         {!libsLoaded && (

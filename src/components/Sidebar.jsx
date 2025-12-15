@@ -1,14 +1,22 @@
 import React, { useState } from 'react';
 import { LayoutDashboard, FileText, Users, Settings, X } from 'lucide-react';
 
-const Sidebar = ({ isOpen = true, onClose }) => {
-  const [activeItem, setActiveItem] = useState(0);
+const Sidebar = ({ isOpen = true, onClose, activeTab = 'dashboard', setActiveTab }) => {
+  // Map activeTab to navItems index
+  const tabToIndex = {
+    'dashboard': 0,
+    'attendance': 1,
+    'employees': 2,
+    'settings': 3,
+  };
+
+  const indexToTab = ['dashboard', 'attendance', 'employees', 'settings'];
 
   const navItems = [
-    { icon: LayoutDashboard, label: '儀表板' },
-    { icon: FileText, label: '出勤明細' },
-    { icon: Users, label: '員工管理' },
-    { icon: Settings, label: '設定' },
+    { icon: LayoutDashboard, label: '儀表板', tab: 'dashboard' },
+    { icon: FileText, label: '出勤明細', tab: 'attendance' },
+    { icon: Users, label: '員工管理', tab: 'employees' },
+    { icon: Settings, label: '設定', tab: 'settings' },
   ];
 
   return (
@@ -54,11 +62,14 @@ const Sidebar = ({ isOpen = true, onClose }) => {
         <nav className="mt-4 px-3">
           {navItems.map((item, idx) => {
             const Icon = item.icon;
-            const isActive = idx === activeItem;
+            const isActive = activeTab === item.tab;
             return (
               <button
                 key={idx}
-                onClick={() => setActiveItem(idx)}
+                onClick={() => {
+                  if (setActiveTab) setActiveTab(item.tab);
+                  if (onClose) onClose(); // Close sidebar on mobile after selection
+                }}
                 className={`
                   w-full px-3 py-2 mb-1 flex items-center gap-3 rounded-lg
                   transition-all duration-150 ease-in-out text-sm font-medium
