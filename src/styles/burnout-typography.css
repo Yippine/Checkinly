@@ -1,0 +1,180 @@
+/**
+ * Burnout Assessment Typography System
+ * Optimized for Chinese readability
+ * Aligned with dashboard typography
+ */
+
+.burnout-assessment {
+  font-size: 14px;
+  line-height: 1.6;
+  letter-spacing: 0.01em;
+}
+
+/* Headings - aligned with dashboard */
+.burnout-assessment h1 {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-bottom: 12px;
+  letter-spacing: -0.01em;
+}
+
+.burnout-assessment h2 {
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.4;
+  margin-bottom: 8px;
+}
+
+.burnout-assessment h3 {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+
+.burnout-assessment h4 {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  margin-bottom: 6px;
+}
+
+/* Body Text */
+.burnout-assessment p {
+  font-size: 14px;
+  line-height: 1.7;
+  margin-bottom: 12px;
+}
+
+.burnout-assessment .text-body-small {
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* Question Text */
+.burnout-assessment .question-text {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.7;
+}
+
+/* Option Labels */
+.burnout-assessment .option-label {
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.burnout-assessment .option-sublabel {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.45);
+}
+
+/* Privacy Notice - increased for readability */
+.burnout-assessment .privacy-notice {
+  font-size: 15px;
+  line-height: 1.8;
+  padding: 16px;
+}
+
+/* Academic Sources */
+.burnout-assessment .academic-source {
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.burnout-assessment .academic-source-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+/* Result Feedback */
+.burnout-assessment .result-feedback {
+  font-size: 18px;
+  line-height: 1.7;
+}
+
+.burnout-assessment .result-score {
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.burnout-assessment .result-level {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.burnout-assessment .result-description {
+  font-size: 18px;
+  line-height: 1.8;
+  margin-bottom: 16px;
+}
+
+.burnout-assessment .result-advice-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.burnout-assessment .result-advice-content {
+  font-size: 18px;
+  line-height: 1.8;
+}
+
+/* Responsive Adjustments - Only for specific result feedback elements */
+@media (min-width: 768px) {
+  /* Result page specific adjustments */
+  .burnout-assessment .result-feedback {
+    font-size: 19px;
+  }
+
+  .burnout-assessment .result-score {
+    font-size: 56px;
+  }
+
+  .burnout-assessment .result-level {
+    font-size: 22px;
+  }
+
+  .burnout-assessment .result-description {
+    font-size: 19px;
+  }
+
+  .burnout-assessment .result-advice-title {
+    font-size: 22px;
+  }
+
+  .burnout-assessment .result-advice-content {
+    font-size: 19px;
+  }
+}
+
+@media (min-width: 1024px) {
+  /* Result page specific adjustments */
+  .burnout-assessment .result-feedback {
+    font-size: 20px;
+  }
+
+  .burnout-assessment .result-score {
+    font-size: 64px;
+  }
+
+  .burnout-assessment .result-level {
+    font-size: 24px;
+  }
+
+  .burnout-assessment .result-description {
+    font-size: 20px;
+  }
+
+  .burnout-assessment .result-advice-title {
+    font-size: 24px;
+  }
+
+  .burnout-assessment .result-advice-content {
+    font-size: 20px;
+  }
+}

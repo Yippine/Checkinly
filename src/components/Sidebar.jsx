@@ -1,20 +1,24 @@
 import React, { useState } from 'react';
-import { LayoutDashboard, FileText, Users, Settings, X } from 'lucide-react';
+import { LayoutDashboard, FileText, Users, Settings, Palette, Activity, X } from 'lucide-react';
 
 const Sidebar = ({ isOpen = true, onClose, activeTab = 'dashboard', setActiveTab }) => {
   // Map activeTab to navItems index
   const tabToIndex = {
     'dashboard': 0,
     'attendance': 1,
-    'employees': 2,
-    'settings': 3,
+    'burnout-assessment': 2,
+    'demo-eap': 3,
+    'employees': 4,
+    'settings': 5,
   };
 
-  const indexToTab = ['dashboard', 'attendance', 'employees', 'settings'];
+  const indexToTab = ['dashboard', 'attendance', 'burnout-assessment', 'demo-eap', 'employees', 'settings'];
 
   const navItems = [
     { icon: LayoutDashboard, label: '儀表板', tab: 'dashboard' },
     { icon: FileText, label: '出勤明細', tab: 'attendance' },
+    { icon: Activity, label: '倦怠評估', tab: 'burnout-assessment' },
+    { icon: Palette, label: '設計參考 (EAP)', tab: 'demo-eap', badge: 'DEMO' },
     { icon: Users, label: '員工管理', tab: 'employees' },
     { icon: Settings, label: '設定', tab: 'settings' },
   ];
@@ -85,7 +89,12 @@ const Sidebar = ({ isOpen = true, onClose, activeTab = 'dashboard', setActiveTab
                   size={20}
                   className={`transition-colors duration-150 ${isActive ? 'text-primary-500' : 'text-text-tertiary'}`}
                 />
-                <span>{item.label}</span>
+                <span className="flex-1 text-left">{item.label}</span>
+                {item.badge && (
+                  <span className="px-1.5 py-0.5 text-[10px] font-bold bg-warning-500 text-white rounded">
+                    {item.badge}
+                  </span>
+                )}
               </button>
             );
           })}

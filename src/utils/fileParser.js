@@ -42,6 +42,10 @@ export const extractData = (rows) => {
     late: getIndex(['遲到(分鐘)', '遲到'], [subHeaders, mainHeaders]),
     early: getIndex(['早退(分鐘)', '早退'], [subHeaders, mainHeaders]),
     absent: getIndex(['曠職(時)', '曠職'], [subHeaders, mainHeaders]),
+    // 新增：狀態欄位（用於識別病假、排休等）
+    status: getIndex(['狀態'], [mainHeaders, subHeaders]),
+    // INC-004: 新增心情指數欄位（可選）
+    moodScore: getIndex(['心情指數', 'Mood Score'], [mainHeaders, subHeaders]),
   };
 
   if (mapIdx.dept === -1 || mapIdx.realHours === -1) {
@@ -74,6 +78,19 @@ export const extractData = (rows) => {
         return isNaN(n) ? 0 : n;
     };
 
+    // INC-004: 解析心情指數（如果欄位存在）
+    let moodScore = null;
+    if (mapIdx.moodScore !== -1 && row[mapIdx.moodScore] !== undefined && row[mapIdx.moodScore] !== '') {
+      const mood = parseNum(row[mapIdx.moodScore]);
+      // 驗證範圍 (1-10)
+      if (mood >= 1 && mood <= 10) {
+        moodScore = mood;
+      } else if (mood !== 0) {
+        // 超出範圍時顯示警告（僅在非零值時）
+        console.warn(`[fileParser] WARNING: Mood score out of range (1-10) for employee ${row[mapIdx.empId]}, date ${row[mapIdx.date]}: ${mood}`);
+      }
+    }
+
     return {
       id: index,
       dept: row[mapIdx.dept],
@@ -84,7 +101,9 @@ export const extractData = (rows) => {
       isLate: parseNum(row[mapIdx.late]) > 0,
       isEarly: parseNum(row[mapIdx.early]) > 0,
       isAbsent: parseNum(row[mapIdx.absent]) > 0,
-      lateMinutes: parseNum(row[mapIdx.late])
+      lateMinutes: parseNum(row[mapIdx.late]),
+      status: mapIdx.status !== -1 ? row[mapIdx.status] : '',
+      moodScore: moodScore  // INC-004: 新增心情指數欄位
     };
   }).filter(Boolean);
 

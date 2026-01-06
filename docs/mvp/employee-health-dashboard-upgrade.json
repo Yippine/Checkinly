@@ -1,0 +1,601 @@
+{
+  "project_name": "Checkinly - Employee Health Dashboard Upgrade (MVP)",
+  "version": "2.0.0",
+  "start_date": "2026-01-05",
+  "target_completion": "2026-01-08 (2-3 days)",
+  "mvp_philosophy": "簡單快速、可用即可、不過度設計、重用現有組件、先求有再求好",
+
+  "supervisor_principles": {
+    "role": "Formula Supervisor - 質疑、批判、調整 Planning/Execution/Explore 成果",
+    "responsibility": "確保交付業界最佳實踐，Supervisor 滿意才可交付給使用者",
+    "automation": "全程自動化開發、測試、驗收並執行下一步驟",
+    "mvp_focus": "2-3 天快速 MVP 實現，簡單有效，避免過度專業化導致冗長複雜",
+    "file_locations": {
+      "project_root": "/mnt/c/Users/user/Documents/Yippine/Program/Checkinly",
+      "formula_workflow": ".claude/formula/workflow",
+      "formula_md": "FORMULA.md (專案根目錄)",
+      "docs": "docs/",
+      "supervisor_docs": "docs/supervisor/",
+      "technical_report": "docs/技術調研報告_工時分析系統升級_2026-01-04.md",
+      "reference_ui": "docs/supervisor/code-snippets/2025-12-31_醫療員工EAP儀表板組件.jsx",
+      "src": "src/",
+      "components": "src/components/",
+      "utils": "src/utils/",
+      "data": "data/",
+      "data_attendance": "data/attendance/",
+      "data_burnout_mock": "data/burnout-mock/"
+    },
+    "workflow": {
+      "before_increment": "執行 /formula-archive",
+      "during_increment": "隨意調用 planning, execution, explore",
+      "after_increment": "上版 (git commit)",
+      "formula_updates": "封存後複製原有 FORMULA.json，僅更新 current_index"
+    },
+    "agent_coordination": {
+      "planning": "撰寫 WorkflowFormula + ImplementationFormula，位置：.claude/formula/workflow/",
+      "execution": "基於公式實現程式碼，雙向驗證，位置：.claude/formula/workflow/",
+      "explore": "探索程式碼結構、搜尋關鍵資訊",
+      "critical_rule": "❌ 所有 FORMULA 文件必須建立在本專案根目錄的 .claude/formula/workflow/",
+      "forbidden": "❌ 絕對禁止在 docs/supervisor/ 中建立任何 FORMULA 文件，該目錄僅供參考"
+    },
+    "flexibility": "可隨意在 FORMULA.json 增加臨時增量"
+  },
+
+  "technical_constraints": {
+    "framework": "React 19.2 + Vite 7.2",
+    "styling": "Tailwind CSS 4.1 (Ant Design Pro 風格)",
+    "charts": "Recharts 3.5",
+    "icons": "Lucide React 0.555",
+    "data_parsing": "xlsx 0.18.5 + PapaParse 5.5.3",
+    "no_database": "MVP 階段不使用資料庫，純前端分析",
+    "no_ess_integration": "不與 ESS 系統串接，採用 Excel 手動上傳方式",
+    "reuse_components": "盡可能重用現有 StatCard、DashboardCard 組件",
+    "simple_logic": "使用最直接的計算邏輯，不做複雜演算法優化"
+  },
+
+  "design_references": {
+    "primary_reference": "docs/supervisor/code-snippets/2025-12-31_醫療員工EAP儀表板組件.jsx",
+    "reference_scope": "僅參考 UI/UX 設計風格，不複製功能邏輯",
+    "key_design_elements": [
+      "健康天氣條 (Health Weather Bar) - 顯示關鍵即時指標",
+      "優先關注名單 (Priority Watchlist) - 高風險員工卡片",
+      "卡片式佈局 (Card-based Layout)",
+      "圖表視覺化 (RadarChart, LineChart, BarChart)",
+      "風險等級色彩編碼（正常/警示/危急）"
+    ],
+    "implementation_note": "INC-001 會快速建立基礎設計系統，確保後續增量風格統一"
+  },
+
+  "data_structure": {
+    "directory_layout": {
+      "data/attendance/": {
+        "description": "出勤打卡資料",
+        "files": [
+          {
+            "name": "11401-10.xlsx",
+            "description": "原始檔案（2025年1-10月出勤報表），保持不動",
+            "source": "院方提供"
+          },
+          {
+            "name": "11401-10-with-mood.xlsx",
+            "description": "複製版 + 心情指數欄位（智能填充）",
+            "generation": "使用 Node.js 腳本自動生成",
+            "mood_logic": "根據加班時數、病假天數、連續工作天數智能填入 1-10 分"
+          }
+        ]
+      },
+      "data/burnout-mock/": {
+        "description": "倦怠問卷假資料（初期展示用）",
+        "format": "JSON（易於程式讀取）",
+        "files": [
+          {
+            "name": "stanford-responses.json",
+            "description": "Stanford 單題問卷假資料",
+            "structure": "{ department, date, score (1-5), employeeCount }"
+          },
+          {
+            "name": "cbi-responses.json",
+            "description": "CBI 問卷假資料",
+            "structure": "{ department, date, personalBurnout, workBurnout, clientBurnout }"
+          },
+          {
+            "name": "olbi-responses.json",
+            "description": "OLBI 問卷假資料",
+            "structure": "{ department, date, exhaustion, disengagement }"
+          }
+        ]
+      }
+    },
+    "excel_new_columns": [
+      {
+        "column_name": "心情指數",
+        "english_name": "Mood Score",
+        "data_type": "整數 (1-10)",
+        "required": false,
+        "description": "員工每日自評心情指數，1 最差，10 最好",
+        "auto_fill_logic": {
+          "high_risk": "加班>80h 或 病假>5天 → 3-5 分",
+          "medium_risk": "加班 40-80h 或 病假 2-5天 → 5-7 分",
+          "normal": "正常狀況 → 7-9 分",
+          "random_variance": "±1 分隨機波動（模擬真實）"
+        }
+      }
+    ],
+    "calculated_fields": [
+      {
+        "field_name": "bradfordScore",
+        "formula": "S² × D",
+        "description": "Bradford Factor 缺勤指數",
+        "data_source": "從出勤狀態統計病假次數(S)與天數(D)"
+      },
+      {
+        "field_name": "consecutiveWorkDays",
+        "formula": "計算連續非休假的工作天數",
+        "description": "用於排班合規檢查",
+        "data_source": "從日期與狀態欄位計算"
+      },
+      {
+        "field_name": "riskScore",
+        "formula": "綜合風險評分 = Bradford×0.3 + 加班時數×0.3 + 連續工作天×0.4",
+        "description": "員工綜合健康風險分數（簡單加權）",
+        "data_source": "多項指標加權計算"
+      }
+    ]
+  },
+
+  "academic_foundations": {
+    "bradford_factor": {
+      "formula": "S² × D (S=缺勤次數, D=缺勤總天數)",
+      "source": "UK HR Standard (Bradford University Research)",
+      "thresholds": {
+        "0-50": "正常",
+        "51-200": "需監控",
+        "201-500": "高風險",
+        "500+": "極高風險"
+      },
+      "references": [
+        "https://www.iris.co.uk/blog/hr/absence-management-what-is-the-bradford-factor/",
+        "https://www.breathehr.com/en-gb/bradford-factor-calculator"
+      ]
+    },
+    "labor_standards_act": {
+      "seven_day_one_rest": "勞基法第36條：每7天至少2日休息",
+      "four_week_flexible": "醫療業可採4週變形工時，連續工作不超過12天",
+      "references": [
+        "https://www.mohw.gov.tw/dl-47213-037e2918-7f19-443d-9114-5d069559e373.html"
+      ]
+    },
+    "burnout_assessments": {
+      "CRITICAL_NOTE": "❗❗❗ 以下問卷題目必須從官方來源取得真實內容，絕對不可自行編造 ❗❗❗",
+      "implementation_requirement": "每個問卷下方必須標註來源連結和學術基礎，以便驗證",
+      "stanford_single_item": {
+        "full_name": "Stanford Single-Item Burnout Question",
+        "question_text": "Overall, based on your definition of burnout, how would you rate your level of burnout?",
+        "scale": "1-5 (Not at all burned out → Completely burned out)",
+        "item_count": 1,
+        "license": "免費使用（學術研究已驗證）",
+        "advantage": "快速、易於每日填寫",
+        "official_source": "Stanford Medicine WellMD Center",
+        "reference": "docs/技術調研報告_工時分析系統升級_2026-01-04.md (第164行)",
+        "where_to_find": "搜尋 Stanford burnout single item 或查看技術報告"
+      },
+      "copenhagen_burnout_inventory": {
+        "full_name": "Copenhagen Burnout Inventory",
+        "abbreviation": "CBI",
+        "item_count": 19,
+        "dimensions": ["個人倦怠 (Personal Burnout)", "工作相關倦怠 (Work-related Burnout)", "客戶相關倦怠 (Client-related Burnout)"],
+        "scale": "5點量表（Always / Often / Sometimes / Seldom / Never/Almost never）",
+        "license": "免費開源",
+        "official_source": "National Research Centre for the Working Environment (Denmark)",
+        "references": [
+          "https://nfa.dk/da/Vaerktoejer/Sporgeskemaer/Copenhagen-Burnout-Inventory",
+          "Kristensen, T. S., et al. (2005). The Copenhagen Burnout Inventory"
+        ],
+        "where_to_find": "官方網站有完整 19 題題目，必須從該網站取得"
+      },
+      "oldenburg_burnout_inventory": {
+        "full_name": "Oldenburg Burnout Inventory",
+        "abbreviation": "OLBI",
+        "item_count": 16,
+        "dimensions": ["疲憊感 (Exhaustion)", "工作疏離感 (Disengagement)"],
+        "scale": "4點量表（Strongly agree / Agree / Disagree / Strongly disagree）",
+        "license": "免費開源",
+        "official_source": "PsyToolkit Survey Library",
+        "references": [
+          "https://www.psytoolkit.org/survey-library/burnout-olbi.html",
+          "Demerouti, E., et al. (2003). OLBI: Alternative to MBI"
+        ],
+        "where_to_find": "PsyToolkit 網站有完整 16 題英文題目，可直接使用"
+      }
+    }
+  },
+
+  "increments": [
+    {
+      "id": "INC-001",
+      "phase": "Phase 0 - 基礎設計",
+      "title": "UI 設計系統快速統一（參考範例風格）",
+      "priority": "P0",
+      "estimated_time": "0.5 天",
+      "mvp_approach": "不做完整 Design System，只建立必要的色彩變數和樣式",
+      "description": "參考 docs/supervisor/code-snippets/2025-12-31_醫療員工EAP儀表板組件.jsx 建立基礎設計元素，確保後續增量風格統一",
+      "acceptance_criteria": [
+        "定義風險等級色彩（正常/警示/危急）",
+        "建立共用的卡片樣式（可重用）",
+        "統一圖示使用規範（Lucide React）",
+        "確保與現有 Ant Design Pro 風格相容"
+      ],
+      "technical_notes": [
+        "修改 tailwind.config.js 新增色彩變數",
+        "可選：建立 src/styles/designTokens.js（簡單版）",
+        "不需要完整 Storybook 或複雜的設計系統",
+        "重點是讓後續增量可以快速套用統一風格"
+      ],
+      "deliverables": [
+        "色彩變數定義",
+        "簡單的樣式指南文件（可選）"
+      ]
+    },
+
+    {
+      "id": "INC-002",
+      "phase": "Phase 0 - 核心計算",
+      "title": "Bradford Factor + 排班合規計算與警示",
+      "priority": "P0",
+      "estimated_time": "1 天",
+      "mvp_approach": "合併兩個計算邏輯，一次完成",
+      "description": "實作 Bradford Factor 缺勤指數計算與排班合規檢查（七休一），並在 UI 顯示警示",
+      "acceptance_criteria": [
+        "能夠從 Excel 識別「病假」狀態",
+        "正確計算每位員工的 Bradford Score = S² × D",
+        "依照門檻值分類風險等級（0-50/51-200/201-500/500+）",
+        "計算每位員工的連續工作天數",
+        "檢測違反「七休一」或「連續12天」的情況",
+        "新增 2 個 StatCard：平均 Bradford Score、排班違規人數",
+        "右側新增「排班違規警示」卡片（紅色）"
+      ],
+      "technical_notes": [
+        "新增 utils/bradfordCalculator.js（計算 Bradford Score）",
+        "新增 utils/complianceChecker.js（檢查排班合規）",
+        "修改 statsCalculator.js 整合兩種計算",
+        "重用現有 StatCard 組件（不需新建）",
+        "新增 components/ComplianceAlert.jsx（簡單列表即可）"
+      ],
+      "ui_changes": [
+        "儀表板 KPI 區域：新增 2 個 StatCard",
+        "右側邊欄：新增排班違規警示卡片"
+      ],
+      "test_data": "使用 data/attendance/11401-10.xlsx 測試"
+    },
+
+    {
+      "id": "INC-003",
+      "phase": "Phase 0 - UI 組件",
+      "title": "優先關注名單 + 健康天氣條",
+      "priority": "P0",
+      "estimated_time": "0.5-1 天",
+      "mvp_approach": "兩個顯示組件一起做，重用卡片樣式",
+      "description": "建立高風險員工清單與健康狀況總覽條，參考範例 UI 設計",
+      "acceptance_criteria": [
+        "建立 PriorityWatchlist 組件，顯示 Top 5 高風險員工",
+        "每個員工卡片包含：姓名、部門、風險分數、風險原因",
+        "使用色彩編碼：critical (紅)、warning (黃)、normal (綠)",
+        "建立 HealthWeatherBar 組件，顯示關鍵指標",
+        "指標包含：平均 Bradford Score、排班違規人數、高加班人數",
+        "使用圖示 + 數字呈現"
+      ],
+      "technical_notes": [
+        "新增 components/PriorityWatchlist.jsx",
+        "新增 components/EmployeeRiskCard.jsx（簡單卡片）",
+        "新增 components/HealthWeatherBar.jsx",
+        "風險分數演算法：簡單加權計算（Bradford×0.3 + 加班×0.3 + 連續天數×0.4）",
+        "參考範例但不複製功能，只參考視覺風格"
+      ],
+      "ui_changes": [
+        "頂部：新增 HealthWeatherBar",
+        "右側邊欄：新增 PriorityWatchlist"
+      ]
+    },
+
+    {
+      "id": "INC-004",
+      "phase": "Phase 1 - 心情指數",
+      "title": "心情指數支援（解析 + 圖表）",
+      "priority": "P1",
+      "estimated_time": "0.5 天",
+      "mvp_approach": "解析與視覺化一起做，不分兩個增量",
+      "description": "支援從 Excel 讀取「心情指數」欄位，並建立趨勢圖與部門熱圖",
+      "acceptance_criteria": [
+        "fileParser.js 能識別「心情指數」或「Mood Score」欄位",
+        "若欄位不存在，不影響其他功能",
+        "驗證心情指數範圍（1-10），超出範圍顯示警告",
+        "計算平均心情指數、部門平均心情指數",
+        "建立心情指數趨勢圖（LineChart）",
+        "建立部門心情熱圖或長條圖",
+        "心情指數低於 5 分時使用警示色彩"
+      ],
+      "technical_notes": [
+        "修改 utils/fileParser.js（新增欄位映射）",
+        "修改 utils/statsCalculator.js（整合心情指數計算）",
+        "新增 components/MoodTrendChart.jsx（使用 Recharts LineChart）",
+        "新增 components/DepartmentMoodChart.jsx（BarChart 即可，熱圖太複雜）",
+        "色彩漸層：紅(1-3) → 黃(4-6) → 綠(7-10)"
+      ],
+      "ui_changes": [
+        "左側主區域：新增心情指數圖表區塊"
+      ],
+      "test_data": "使用 data/attendance/11401-10-with-mood.xlsx（需先生成）",
+      "prerequisite": "需要先執行資料生成腳本建立心情版 Excel"
+    },
+
+    {
+      "id": "INC-005",
+      "phase": "Phase 1 - 倦怠問卷",
+      "title": "倦怠評估問卷三選一（真實題目）",
+      "priority": "P1",
+      "estimated_time": "1 天",
+      "mvp_approach": "三種問卷功能類似，可共用表單邏輯",
+      "description": "新增「倦怠評估」頁籤，提供 Stanford、CBI、OLBI 三種問卷，使用真實題目內容",
+      "CRITICAL_REQUIREMENT": "❗❗❗ 必須從官方來源取得真實問卷題目，絕對不可自行編造 ❗❗❗",
+      "acceptance_criteria": [
+        "新增 Sidebar 選單項目：「倦怠評估」",
+        "建立問卷選擇介面（三個按鈕或 Tab）",
+        "實作 Stanford 單題問卷（1題，真實題目）",
+        "實作 CBI 問卷（19題，從官方網站取得）",
+        "實作 OLBI 問卷（16題，從 PsyToolkit 取得）",
+        "每個問卷底部顯示學術來源與參考文獻連結",
+        "填寫後儲存至 localStorage（匿名化：部門 + 分數）",
+        "提供「清除資料」功能",
+        "問卷題目必須與官方來源一致，可驗證"
+      ],
+      "technical_notes": [
+        "新增 components/BurnoutAssessment.jsx（主頁面，Tab 切換）",
+        "新增 components/StanfordSingleItem.jsx（1題表單）",
+        "新增 components/CBIQuestionnaire.jsx（19題表單）",
+        "新增 components/OLBIQuestionnaire.jsx（16題表單）",
+        "共用表單邏輯：建立 hooks/useBurnoutForm.js",
+        "localStorage 鍵值：burnout_stanford / burnout_cbi / burnout_olbi"
+      ],
+      "questionnaire_sources": {
+        "stanford": {
+          "official_question": "Overall, based on your definition of burnout, how would you rate your level of burnout?",
+          "scale_labels": ["1 - Not at all burned out", "2 - A little burned out", "3 - Moderately burned out", "4 - Very burned out", "5 - Completely burned out"],
+          "reference_link": "Stanford Medicine WellMD Center",
+          "display_at_bottom": "參考來源：Stanford Single-Item Burnout Measure (已驗證有效性)"
+        },
+        "cbi": {
+          "item_count": 19,
+          "official_source": "https://nfa.dk/da/Vaerktoejer/Sporgeskemaer/Copenhagen-Burnout-Inventory",
+          "how_to_obtain": "從官方網站取得完整 19 題英文或丹麥文題目，可翻譯成中文",
+          "reference_link": "National Research Centre for the Working Environment (Denmark)",
+          "display_at_bottom": "參考來源：Copenhagen Burnout Inventory (Kristensen et al., 2005) - 免費開源量表"
+        },
+        "olbi": {
+          "item_count": 16,
+          "official_source": "https://www.psytoolkit.org/survey-library/burnout-olbi.html",
+          "how_to_obtain": "從 PsyToolkit 網站複製完整 16 題英文題目",
+          "reference_link": "PsyToolkit Survey Library",
+          "display_at_bottom": "參考來源：Oldenburg Burnout Inventory (Demerouti et al., 2003) - 免費開源量表"
+        }
+      },
+      "ui_changes": [
+        "Sidebar：新增「倦怠評估」選項",
+        "新增獨立頁面 /burnout-assessment"
+      ]
+    },
+
+    {
+      "id": "INC-006",
+      "phase": "Phase 1 - 倦怠視覺化",
+      "title": "倦怠趨勢圖與統計（假資料展示）",
+      "priority": "P1",
+      "estimated_time": "0.5 天",
+      "mvp_approach": "使用簡單的假資料生成邏輯，不做複雜模擬",
+      "description": "建立倦怠分數趨勢圖與高風險統計，初期使用假資料展示效果",
+      "acceptance_criteria": [
+        "建立「倦怠趨勢圖」，顯示部門平均分數變化",
+        "建立「高風險人數統計」卡片，顯示各風險等級人數",
+        "使用假資料模擬（參考實際出勤資料的部門結構）",
+        "匿名化處理（僅顯示部門平均）",
+        "預留切換真實資料的介面"
+      ],
+      "technical_notes": [
+        "新增 components/BurnoutTrendChart.jsx（LineChart）",
+        "新增 components/BurnoutRiskStats.jsx（StatCard 組合）",
+        "新增 utils/mockBurnoutData.js（假資料產生器）",
+        "假資料生成邏輯：",
+        "  - 讀取 data/attendance/11401-10.xlsx 取得部門清單",
+        "  - 為每個部門生成 2025-01 ~ 2025-10 的月平均分數",
+        "  - 分數範圍：正常部門 1.5-2.5，高壓部門 3.0-4.0（5點量表）",
+        "未來擴充：從 localStorage 讀取真實問卷資料"
+      ],
+      "mock_data_structure": {
+        "stanford": "{ department, month, avgScore (1-5), employeeCount }",
+        "cbi": "{ department, month, personalBurnout, workBurnout, clientBurnout }",
+        "olbi": "{ department, month, exhaustion, disengagement }"
+      },
+      "ui_changes": [
+        "倦怠評估頁面：新增趨勢圖區塊",
+        "倦怠評估頁面：新增統計卡片"
+      ],
+      "data_files": [
+        "data/burnout-mock/stanford-responses.json",
+        "data/burnout-mock/cbi-responses.json",
+        "data/burnout-mock/olbi-responses.json"
+      ]
+    },
+
+    {
+      "id": "INC-007",
+      "phase": "整合測試",
+      "title": "整合測試、使用者文件與交付",
+      "priority": "P0",
+      "estimated_time": "0.5 天",
+      "mvp_approach": "基本測試即可，不做完整 E2E 測試",
+      "description": "完整測試所有新增功能，撰寫使用者操作手冊，準備交付",
+      "acceptance_criteria": [
+        "測試 Bradford Factor 計算正確性（邊界值測試）",
+        "測試排班合規檢查邏輯",
+        "測試心情指數解析與圖表呈現",
+        "測試倦怠問卷填寫與 localStorage 儲存",
+        "測試問卷題目與官方來源一致性（可驗證）",
+        "撰寫 README 使用說明（如何新增心情指數欄位）",
+        "建立範例 Excel 檔案（含心情指數欄位）",
+        "效能測試（大量資料載入）"
+      ],
+      "technical_notes": [
+        "建立測試用 Excel 檔案（各種情境）",
+        "更新 README.md（新增功能說明）",
+        "建立 docs/USER_GUIDE.md（操作手冊）",
+        "記錄已知問題（如有）"
+      ],
+      "deliverables": [
+        "測試報告（簡單記錄）",
+        "使用者操作手冊",
+        "範例資料檔案（含心情欄位）",
+        "部署檢查清單"
+      ]
+    },
+
+    {
+      "id": "INC-008",
+      "phase": "選配功能",
+      "title": "深色模式切換（選配，最後）",
+      "priority": "P2 (Optional)",
+      "estimated_time": "0.5 天",
+      "mvp_approach": "使用 Tailwind dark: 前綴，最簡單的實作方式",
+      "description": "參考範例 EAP 儀表板的深色模式設計理念，新增深色/淺色模式切換功能",
+      "acceptance_criteria": [
+        "在 Header 或 Sidebar 新增模式切換按鈕",
+        "實作深色模式 CSS（Tailwind dark: 前綴）",
+        "所有組件支援深色模式（背景、文字、邊框）",
+        "模式選擇儲存至 localStorage",
+        "參考範例的深色模式配色"
+      ],
+      "technical_notes": [
+        "使用 React Context API 或簡單的 useState",
+        "修改 tailwind.config.js 啟用 darkMode: 'class'",
+        "為主要組件添加 dark: 前綴樣式",
+        "參考色彩：深鐵灰 #121212、青色 #00897B、琥珀色 #FFB300"
+      ],
+      "ui_changes": [
+        "Header 右上角：新增深色模式切換按鈕"
+      ],
+      "design_reference": "docs/supervisor/code-snippets/2025-12-31_醫療員工EAP儀表板組件.jsx"
+    }
+  ],
+
+  "current_index": 0,
+  "total_count": 8,
+
+  "ui_layout_plan": {
+    "dashboard_main": {
+      "top": "HealthWeatherBar (INC-003 新增)",
+      "kpi_cards": [
+        "本月總工時 (既有)",
+        "總加班時數 (既有)",
+        "出勤異常 (既有)",
+        "在職人數 (既有)",
+        "平均 Bradford Score (INC-002 新增)",
+        "排班違規人數 (INC-002 新增)"
+      ],
+      "left_main_area": [
+        "每日出勤趨勢分析 (既有)",
+        "部門工時排行 (既有)",
+        "心情指數趨勢圖 (INC-004 新增)",
+        "部門心情圖表 (INC-004 新增)"
+      ],
+      "right_sidebar": [
+        "優先關注名單 (INC-003 新增 - 參考範例)",
+        "排班合規預警 (INC-002 新增)",
+        "智慧分析建議 (既有)",
+        "出勤狀態分佈 (既有)",
+        "加班 Top 5 (既有)"
+      ]
+    },
+    "new_tabs": [
+      {
+        "name": "倦怠評估",
+        "path": "/burnout-assessment",
+        "components": [
+          "問卷選擇介面（三個選項）",
+          "Stanford 單題問卷",
+          "CBI 問卷（19題）",
+          "OLBI 問卷（16題）",
+          "倦怠趨勢圖",
+          "高風險統計"
+        ]
+      }
+    ]
+  },
+
+  "color_scheme": {
+    "risk_levels": {
+      "normal": {
+        "label": "正常",
+        "bg": "bg-success-50 dark:bg-success-900/20",
+        "text": "text-success-600 dark:text-success-400",
+        "border": "border-success-200 dark:border-success-800",
+        "hex": "#52c41a"
+      },
+      "warning": {
+        "label": "警示",
+        "bg": "bg-warning-50 dark:bg-warning-900/20",
+        "text": "text-warning-600 dark:text-warning-400",
+        "border": "border-warning-200 dark:border-warning-800",
+        "hex": "#faad14"
+      },
+      "critical": {
+        "label": "危急",
+        "bg": "bg-error-50 dark:bg-error-900/20",
+        "text": "text-error-600 dark:text-error-400",
+        "border": "border-error-200 dark:border-error-800",
+        "hex": "#f5222d"
+      }
+    },
+    "mood_gradient": {
+      "low": "#f5222d (1-3分)",
+      "medium": "#faad14 (4-6分)",
+      "high": "#52c41a (7-10分)"
+    }
+  },
+
+  "prerequisites": {
+    "data_generation": {
+      "description": "開始 INC-004 前需要先生成心情版測試資料",
+      "script_location": "scripts/generateMoodData.js (待建立)",
+      "tasks": [
+        "複製 data/attendance/11401-10.xlsx → 11401-10-with-mood.xlsx",
+        "分析每位員工的加班、病假、連續工作天數",
+        "根據分析結果智能填入心情分數（1-10）",
+        "確保資料合理性（不會超出上下文）"
+      ]
+    },
+    "questionnaire_collection": {
+      "description": "開始 INC-005 前需要先取得真實問卷題目",
+      "tasks": [
+        "從 Stanford 論文或官方來源取得單題問卷完整文字",
+        "從 https://nfa.dk 取得 CBI 完整 19 題（可能需要翻譯）",
+        "從 https://www.psytoolkit.org/survey-library/burnout-olbi.html 取得 OLBI 完整 16 題",
+        "整理成 JSON 或 JS 常數格式",
+        "記錄每個問卷的參考來源連結"
+      ]
+    }
+  },
+
+  "notes": {
+    "mvp_timeline": "2-3 天快速 MVP 實現",
+    "phase_0_priority": "INC-001 ~ INC-003 是核心功能，優先完成",
+    "phase_1_optional": "INC-004 ~ INC-006 可依時間調整",
+    "dark_mode_last": "INC-008 深色模式放在最後（選配）",
+    "no_backend_required": "MVP 階段純前端，使用 localStorage",
+    "reuse_principle": "盡可能重用現有組件（StatCard、DashboardCard）",
+    "simple_calculation": "使用簡單直接的計算邏輯，不做複雜優化",
+    "future_enhancements": [
+      "與 ESS 系統 API 串接（Phase 2）",
+      "完整 MBI 量表整合（若購買授權）",
+      "ML 預測模型（委外開發）",
+      "休假餘額追蹤（需額外資料來源）"
+    ]
+  }
+}

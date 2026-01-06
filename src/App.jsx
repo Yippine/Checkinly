@@ -5,7 +5,7 @@ import {
 } from 'recharts';
 import {
   Upload, FileText, AlertCircle, Clock, Users, TrendingUp,
-  Briefcase, Calendar, CheckCircle, XCircle, Lightbulb, CheckCircle2
+  Briefcase, Calendar, CheckCircle, XCircle, Lightbulb, CheckCircle2, AlertTriangle
 } from 'lucide-react';
 
 // Import utilities and components
@@ -13,11 +13,20 @@ import { initLibraries, parseCSV, parseExcel } from './utils/fileParser';
 import { calculateStats } from './utils/statsCalculator';
 import Card from './components/Card';
 import StatCard from './components/StatCard';
+import ComplianceAlert from './components/ComplianceAlert';
+import PriorityWatchlist from './components/PriorityWatchlist';
+import HealthWeatherBar from './components/HealthWeatherBar';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import GlobalLoader from './components/GlobalLoader';
 import { KPISkeleton, ChartSkeleton } from './components/Skeleton';
 import AttendanceTable from './components/AttendanceTable';
+import DemoEAP from './pages/DemoEAP';
+// INC-004: Mood Index Components
+import MoodTrendChart from './components/MoodTrendChart';
+import DepartmentMoodChart from './components/DepartmentMoodChart';
+// INC-005: Burnout Assessment
+import BurnoutAssessment from './components/BurnoutAssessment';
 
 // --- Main Application ---
 
@@ -84,6 +93,15 @@ export default function App() {
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} activeTab={activeTab} setActiveTab={setActiveTab} />
       <Header fileName={fileName} onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
 
+      {/* Health Weather Bar - Only show when data is available and in dashboard view */}
+      {data && stats && activeTab === 'dashboard' && (
+        <HealthWeatherBar
+          avgBradfordScore={stats.avgBradfordScore || 0}
+          violationCount={stats.violationCount || 0}
+          highOTCount={stats.highOTCount || 0}
+        />
+      )}
+
       {/* Main Content */}
       <main
         className="lg:ml-64 mt-16 p-4 sm:p-6 lg:p-8 min-h-screen transition-all duration-300"
@@ -133,8 +151,14 @@ export default function App() {
           )}
         </div>
 
-        {/* RouteSystem: View(Dashboard | AttendanceDetail) + Animation(fade_in) */}
-        {activeTab === 'dashboard' ? (
+        {/* RouteSystem: View(Dashboard | AttendanceDetail | BurnoutAssessment | DemoEAP) + Animation(fade_in) */}
+        {activeTab === 'burnout-assessment' ? (
+          /* Burnout Assessment View */
+          <BurnoutAssessment />
+        ) : activeTab === 'demo-eap' ? (
+          /* Demo EAP View */
+          <DemoEAP />
+        ) : activeTab === 'dashboard' ? (
           /* Dashboard View */
           !data ? (
             /* Empty State with Skeleton */
@@ -235,6 +259,20 @@ export default function App() {
                 subtext="依出勤紀錄計算"
                 icon={Users}
                 colorScheme="success"
+              />
+              <StatCard
+                title="平均 Bradford Score"
+                value={stats.avgBradfordScore?.toFixed(1) || '0.0'}
+                subtext="缺勤風險指數"
+                icon={AlertTriangle}
+                colorScheme={stats.avgBradfordScore > 100 ? 'warning' : 'success'}
+              />
+              <StatCard
+                title="排班違規人數"
+                value={stats.violationCount || 0}
+                subtext="七休一 + 連續12天"
+                icon={Calendar}
+                colorScheme={stats.violationCount > 0 ? 'error' : 'success'}
               />
             </div>
 
@@ -357,10 +395,23 @@ export default function App() {
                     </ResponsiveContainer>
                   </div>
                 </Card>
+
+                {/* INC-004: Mood Index Charts - Only show when mood data is available */}
+                {stats.hasMoodData && (
+                  <>
+                    <MoodTrendChart data={stats.moodTrendData} />
+                    <DepartmentMoodChart data={stats.deptMoodData} />
+                  </>
+                )}
               </div>
 
               {/* Right Column: Insights & Pie Chart */}
               <div className="space-y-6">
+
+                {/* Priority Watchlist - New Component */}
+                {stats.topRiskEmployees && stats.topRiskEmployees.length > 0 && (
+                  <PriorityWatchlist topRiskEmployees={stats.topRiskEmployees} />
+                )}
 
                 {/* Smart Suggestion Card - Enhanced with gradient background and icons */}
                 <Card className="bg-gradient-to-br from-primary-50 to-secondary-50 border-primary-200" animated={true}>
@@ -377,6 +428,11 @@ export default function App() {
                     ))}
                   </div>
                 </Card>
+
+                {/* Compliance Alert - New Component */}
+                {stats.violationList && stats.violationList.length > 0 && (
+                  <ComplianceAlert violations={stats.violationList} />
+                )}
 
                 {/* Status Pie Chart - Enhanced with design system colors */}
                 <Card animated={true}>
