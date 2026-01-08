@@ -106,14 +106,10 @@ export default {
         'border-light': '#e8e8e8',
         'border-default': '#d9d9d9',
         'border-dark': '#bfbfbf',
-        // Text Colors
-        text: {
-          primary: 'rgba(0, 0, 0, 0.85)', // 85% black
-          secondary: 'rgba(0, 0, 0, 0.65)', // 65% black
-          tertiary: 'rgba(0, 0, 0, 0.45)', // 45% black
-          disabled: 'rgba(0, 0, 0, 0.25)', // 25% black
-          inverse: '#ffffff',
-        },
+        // Text Colors (removed - use text-slate-* for dark mode support)
+        // Use: text-slate-900 dark:text-slate-100 (primary)
+        //      text-slate-600 dark:text-slate-300 (secondary)
+        //      text-slate-500 dark:text-slate-400 (tertiary)
         // Sidebar (Light Theme)
         sidebar: {
           bg: '#001529', // Dark sidebar (Ant Design default)

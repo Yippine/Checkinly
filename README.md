@@ -22,6 +22,37 @@
 - **狀態分佈**: 出勤狀態圓餅圖（內圈設計）
 - **加班排行**: Top 5 加班員工表格
 
+### 員工健康監測 (Employee Health Monitoring)
+
+#### Bradford Factor 缺勤分析
+- **自動計算**: 根據缺勤次數 (S) 和缺勤天數 (D) 計算 Bradford Factor
+- **公式**: Bradford Factor = S² × D
+- **風險等級**:
+  - 低風險 (< 50): 綠色
+  - 中風險 (50-100): 黃色
+  - 高風險 (> 100): 紅色
+- **應用場景**: 識別頻繁短期缺勤的員工，提早介入管理
+
+#### 排班合規檢查
+- **七休一法規**: 自動檢測連續工作超過 6 天的情況
+- **醫療變形工時**: 支援醫療產業 12 天彈性規則
+- **即時警示**: 優先關注名單自動標記違規員工
+
+#### 心情指數追蹤
+- **欄位支援**: 支援「心情指數」、「Mood Score」等欄位名稱
+- **趨勢分析**: 個人心情趨勢圖表
+- **部門分析**: 部門平均心情指數比較
+- **設定指南**: 參見下方「心情指數欄位設定」
+
+#### 倦怠評估系統
+- **三種問卷**:
+  - Stanford 單題問卷 (快速評估)
+  - CBI 哥本哈根倦怠量表 (19 題)
+  - OLBI 奧爾登堡倦怠量表 (16 題)
+- **數據持久化**: 使用 localStorage 儲存評估結果
+- **趨勢追蹤**: 倦怠分數時間序列圖表
+- **風險統計**: 自動分類低/中/高風險比例
+
 ### 智能建議
 - **自動分析**: 基於數據自動生成管理建議
 - **異常預警**: 識別高加班、高遲到等異常情況
@@ -143,6 +174,76 @@ Checkinly/
 ### 3. 清除數據
 
 點擊右上角「清除資料重選」按鈕，可重新上傳檔案
+
+---
+
+## 心情指數欄位設定指南
+
+### 欄位命名 (Field Naming)
+系統支援以下欄位名稱（不分大小寫）：
+- `心情指數`
+- `Mood Score`
+- `mood`
+- `情緒`
+
+### 欄位格式 (Field Format)
+- **數值範圍**: 1-10（整數或小數）
+- **資料類型**: 數字
+- **空值處理**: 空白欄位將被忽略，不影響圖表顯示
+
+### Excel 設定步驟
+1. 在出勤資料表中新增一欄
+2. 欄位標題命名為「心情指數」或「Mood Score」
+3. 在該欄位填入 1-10 的數值（1=極度不佳，10=極度良好）
+4. 儲存檔案並上傳至系統
+
+### 範例檔案
+參考 `data/examples/sample-with-mood.xlsx` 瞭解標準格式
+
+### 常見問題
+- **Q: 如果沒有心情指數欄位會怎樣？**
+  A: 系統會正常運作，只是不會顯示心情相關圖表
+
+- **Q: 心情指數可以是小數嗎？**
+  A: 可以，例如 7.5 是有效值
+
+- **Q: 如果數值超出 1-10 範圍？**
+  A: 系統會進行驗證並標記為無效值
+
+---
+
+## 學術基礎與參考文獻
+
+### Bradford Factor
+- **來源**: Bradford University School of Management
+- **用途**: 量化缺勤對組織的影響
+- **公式**: S² × D (S=缺勤次數, D=缺勤總天數)
+- **理論**: 短期頻繁缺勤對組織運作的影響大於單次長期缺勤
+
+### 倦怠評估問卷
+
+**Stanford Professional Fulfillment Index (Single-Item)**
+- **文獻**: Rohland, B. M., Kruse, G. R., & Rohrer, J. E. (2004). Validation of a single-item measure of burnout against the Maslach Burnout Inventory among physicians. Stress and Health, 20(2), 75-79.
+- **問題**: "Overall, based on your definition of burnout, how would you rate your level of burnout?"
+- **量尺**: 7-point scale (1=No burnout, 7=Severe burnout)
+
+**Copenhagen Burnout Inventory (CBI)**
+- **文獻**: Kristensen, T. S., Borritz, M., Villadsen, E., & Christensen, K. B. (2005). The Copenhagen Burnout Inventory: A new tool for the assessment of burnout. Work & Stress, 19(3), 192-207.
+- **維度**: Personal burnout, Work-related burnout, Client-related burnout
+- **題數**: 19 題
+- **量尺**: 5-point frequency scale
+
+**Oldenburg Burnout Inventory (OLBI)**
+- **文獻**: Demerouti, E., Bakker, A. B., Vardakou, I., & Kantas, A. (2003). The convergent validity of two burnout instruments: A multitrait-multimethod analysis. European Journal of Psychological Assessment, 19(1), 12-23.
+- **維度**: Exhaustion (耗竭), Disengagement (疏離)
+- **題數**: 16 題 (每維度 8 題)
+- **量尺**: 4-point agreement scale
+
+### 排班合規
+- **法規依據**: 勞動基準法第 36 條（七休一）
+- **醫療變形工時**: 勞動基準法第 36 條第 4 項
+
+---
 
 ## 設計規範
 

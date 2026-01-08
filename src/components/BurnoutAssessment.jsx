@@ -1,28 +1,32 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Card from "./Card";
 import StanfordSingleItem from "./StanfordSingleItem";
 import CBIQuestionnaire from "./CBIQuestionnaire";
 import OLBIQuestionnaire from "./OLBIQuestionnaire";
+import BurnoutTrendChart from "./BurnoutTrendChart";
+import BurnoutRiskStats from "./BurnoutRiskStats";
+import { generateMockBurnoutData } from "../utils/mockBurnoutData";
 import "../styles/burnout-typography.css";
 
 const BurnoutAssessment = () => {
   const [activeQuestionnaire, setActiveQuestionnaire] = useState("stanford");
   const [refreshKey, setRefreshKey] = useState(0);
+  const [mockData, setMockData] = useState(null);
 
   // Clear previous questionnaire data when switching
   const handleQuestionnaireChange = (questionnaireId) => {
     if (questionnaireId !== activeQuestionnaire) {
-      // Clear localStorage for previous questionnaire
+      // Clear localStorage for ALL questionnaires to ensure clean state
       const storageKeys = {
         stanford: "burnout_stanford",
         cbi: "burnout_cbi",
         olbi: "burnout_olbi",
       };
 
-      // Clear the previous questionnaire's data
-      if (storageKeys[activeQuestionnaire]) {
-        localStorage.removeItem(storageKeys[activeQuestionnaire]);
-      }
+      // Clear ALL questionnaire data when switching
+      Object.values(storageKeys).forEach(key => {
+        localStorage.removeItem(key);
+      });
 
       // Update active questionnaire and force re-render
       setActiveQuestionnaire(questionnaireId);
@@ -51,21 +55,29 @@ const BurnoutAssessment = () => {
     },
   ];
 
+  // Generate mock data when questionnaire changes (INC-006)
+  useEffect(() => {
+    if (activeQuestionnaire) {
+      const data = generateMockBurnoutData(activeQuestionnaire);
+      setMockData(data);
+    }
+  }, [activeQuestionnaire]);
+
   return (
     <div className="burnout-assessment space-y-6 animate-fade-in">
       {/* Page Header */}
       <div>
-        <div className="text-heading-1 text-text-primary font-bold mb-2">
+        <div className="text-heading-1 text-slate-900 dark:text-slate-100 font-bold mb-2">
           倦怠評估
         </div>
-        <div className="text-body text-text-secondary">
+        <div className="text-body text-slate-600 dark:text-slate-300">
           選擇一種問卷進行倦怠評估，所有資料僅儲存於本機瀏覽器，完全匿名化。
         </div>
       </div>
 
       {/* Questionnaire Tabs */}
       <Card>
-        <div className="border-b border-neutral-200 pb-4 mb-6">
+        <div className="border-b border-neutral-200 dark:border-slate-700 pb-4 mb-6">
           <div className="flex flex-col sm:flex-row gap-2">
             {questionnaires.map((q) => (
               <button
@@ -75,8 +87,8 @@ const BurnoutAssessment = () => {
                   flex-1 px-4 py-3 rounded-lg transition-all duration-200 text-left
                   ${
                     activeQuestionnaire === q.id
-                      ? "bg-primary-50 border-2 border-primary-500 shadow-sm"
-                      : "bg-neutral-50 border-2 border-transparent hover:border-neutral-300 hover:bg-neutral-100"
+                      ? "bg-primary-50 dark:bg-primary-900/30 border-2 border-primary-500 dark:border-primary-600 shadow-sm"
+                      : "bg-neutral-50 dark:bg-slate-700 border-2 border-transparent hover:border-neutral-300 dark:hover:border-slate-600 hover:bg-neutral-100 dark:hover:bg-slate-600"
                   }
                 `}
               >
@@ -85,16 +97,16 @@ const BurnoutAssessment = () => {
                     <div
                       className={`text-sm font-semibold mb-1 ${
                         activeQuestionnaire === q.id
-                          ? "text-primary-600"
-                          : "text-text-primary"
+                          ? "text-primary-600 dark:text-primary-400"
+                          : "text-slate-900 dark:text-slate-100"
                       }`}
                     >
                       {q.label}
                     </div>
-                    <div className="text-sm text-text-tertiary mb-1">
+                    <div className="text-sm text-slate-500 dark:text-slate-400 mb-1">
                       {q.subtitle}
                     </div>
-                    <div className="text-sm text-text-secondary">
+                    <div className="text-sm text-slate-600 dark:text-slate-300">
                       {q.description}
                     </div>
                   </div>
@@ -125,14 +137,28 @@ const BurnoutAssessment = () => {
                 />
               </svg>
             </div>
-            <div className="text-sm text-text-secondary leading-relaxed">
-              <strong className="text-text-primary">隱私說明：</strong>
+            <div className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+              <strong className="text-slate-900 dark:text-slate-100">隱私說明：</strong>
               所有問卷結果僅儲存於您的瀏覽器本機儲存空間（localStorage），不會上傳至任何伺服器。
               儲存格式為匿名化資料（僅包含部門、日期與分數），不包含任何個人識別資訊。
             </div>
           </div>
         </div>
       </Card>
+
+      {/* Burnout Visualization Section - INC-006 */}
+      {mockData && (
+        <div className="space-y-6">
+          <BurnoutRiskStats
+            statsData={mockData.statsData}
+            questionnaireType={activeQuestionnaire}
+          />
+          <BurnoutTrendChart
+            data={mockData.trendData}
+            questionnaireType={activeQuestionnaire}
+          />
+        </div>
+      )}
 
       {/* Questionnaire Content */}
       {activeQuestionnaire === "stanford" && (

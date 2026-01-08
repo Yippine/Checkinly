@@ -167,7 +167,7 @@ const AttendanceTable = ({ data = [] }) => {
           <div className="flex-1 w-full sm:max-w-md">
             <div className="relative">
               <Search
-                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-text-tertiary"
+                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500 dark:text-slate-400"
                 size={18}
               />
               <input
@@ -177,9 +177,10 @@ const AttendanceTable = ({ data = [] }) => {
                 onChange={handleSearchChange}
                 className="
                   w-full pl-10 pr-10 py-2.5
-                  border border-neutral-300 rounded-lg
+                  bg-white dark:bg-slate-800
+                  border border-neutral-300 dark:border-slate-600 rounded-lg
                   focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent
-                  text-body text-text-primary placeholder-text-tertiary
+                  text-body text-slate-900 dark:text-slate-100 placeholder-slate-400
                   transition-all duration-150
                 "
                 aria-label="搜尋出勤資料"
@@ -189,7 +190,7 @@ const AttendanceTable = ({ data = [] }) => {
                   onClick={handleClearSearch}
                   className="
                     absolute right-3 top-1/2 transform -translate-y-1/2
-                    text-text-tertiary hover:text-text-primary
+                    text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100
                     transition-colors duration-150
                   "
                   aria-label="清除搜尋"
@@ -198,7 +199,7 @@ const AttendanceTable = ({ data = [] }) => {
                 </button>
               )}
             </div>
-            <p className="text-body-small text-text-tertiary mt-1">
+            <p className="text-body-small text-slate-500 dark:text-slate-400 mt-1">
               顯示 {filteredData.length} 筆資料（共 {data.length} 筆）
             </p>
           </div>
@@ -234,15 +235,15 @@ const AttendanceTable = ({ data = [] }) => {
           <>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <thead className="bg-neutral-50 border-b-2 border-neutral-200">
+                <thead className="bg-neutral-50 dark:bg-slate-700 border-b-2 border-neutral-200 dark:border-slate-600">
                   <tr>
                     {columns.map(col => (
                       <th
                         key={col.key}
                         onClick={() => handleSort(col.key)}
                         className={`
-                          px-4 py-3 text-left text-heading-4 text-text-secondary font-semibold
-                          ${col.sortable ? 'cursor-pointer hover:bg-neutral-100 transition-colors duration-150' : ''}
+                          px-4 py-3 text-left text-heading-4 text-slate-600 dark:text-slate-300 font-semibold
+                          ${col.sortable ? 'cursor-pointer hover:bg-neutral-100 dark:hover:bg-slate-600 transition-colors duration-150' : ''}
                         `}
                       >
                         <div className="flex items-center gap-1">
@@ -253,32 +254,32 @@ const AttendanceTable = ({ data = [] }) => {
                     ))}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-neutral-100">
+                <tbody className="divide-y divide-neutral-100 dark:divide-slate-700">
                   {paginatedData.map((row, idx) => (
                     <tr
                       key={`${row.empId}-${row.date}-${idx}`}
-                      className="hover:bg-neutral-50 transition-colors duration-150"
+                      className="hover:bg-neutral-50 dark:hover:bg-slate-700/50 transition-colors duration-150"
                     >
-                      <td className="px-4 py-3 font-medium text-text-primary">{row.dept || '-'}</td>
-                      <td className="px-4 py-3 text-text-secondary">{row.empId || '-'}</td>
-                      <td className="px-4 py-3 text-text-secondary">{row.date || '-'}</td>
-                      <td className={`px-4 py-3 ${['(六)', '(日)'].includes(row.weekday) ? 'text-error-500 font-medium' : 'text-text-secondary'}`}>
+                      <td className="px-4 py-3 font-medium text-slate-900 dark:text-slate-100">{row.dept || '-'}</td>
+                      <td className="px-4 py-3 text-slate-600 dark:text-slate-300">{row.empId || '-'}</td>
+                      <td className="px-4 py-3 text-slate-600 dark:text-slate-300">{row.date || '-'}</td>
+                      <td className={`px-4 py-3 ${['(六)', '(日)'].includes(row.weekday) ? 'text-error-500 font-medium' : 'text-slate-600 dark:text-slate-300'}`}>
                         {row.weekday || '-'}
                       </td>
-                      <td className="px-4 py-3 text-text-secondary truncate max-w-[150px]" title={row.shift}>
+                      <td className="px-4 py-3 text-slate-600 dark:text-slate-300 truncate max-w-[150px]" title={row.shift}>
                         {row.shift || '-'}
                       </td>
-                      <td className="px-4 py-3 font-mono text-xs text-text-secondary">
+                      <td className="px-4 py-3 font-mono text-xs text-slate-600 dark:text-slate-300">
                         {row.checkIn && row.checkOut ? `${row.checkIn} - ${row.checkOut}` : '-'}
                       </td>
                       <td className={`px-4 py-3 text-right font-semibold ${
-                        (row.actualHours || 0) > 9 ? 'text-warning-600' : 'text-text-primary'
+                        (row.actualHours || 0) > 9 ? 'text-warning-600' : 'text-slate-900 dark:text-slate-100'
                       }`}>
                         {row.actualHours || 0}
                       </td>
                       <td className="px-4 py-3">
                         {row.otRecord ? (
-                          <span className="bg-error-100 text-error-700 px-2 py-0.5 rounded text-xs font-medium">
+                          <span className="bg-error-100 dark:bg-error-900/30 text-error-700 dark:text-error-400 px-2 py-0.5 rounded text-xs font-medium">
                             {row.otRecord}
                           </span>
                         ) : (
@@ -293,8 +294,8 @@ const AttendanceTable = ({ data = [] }) => {
 
             {/* PaginationEngine: NavigationControls */}
             {sortedData.length > PAGE_SIZE && (
-              <div className="border-t border-neutral-200 px-6 py-4 flex items-center justify-between bg-neutral-50">
-                <div className="text-body-small text-text-secondary">
+              <div className="border-t border-neutral-200 dark:border-slate-700 px-6 py-4 flex items-center justify-between bg-neutral-50 dark:bg-slate-700/50">
+                <div className="text-body-small text-slate-600 dark:text-slate-300">
                   第 {currentPage} 頁，共 {totalPages} 頁
                 </div>
                 <div className="flex items-center gap-2">
@@ -302,8 +303,8 @@ const AttendanceTable = ({ data = [] }) => {
                     onClick={handlePreviousPage}
                     disabled={currentPage === 1}
                     className="
-                      px-3 py-2 border border-neutral-300 rounded-lg
-                      text-text-secondary hover:bg-neutral-100
+                      px-3 py-2 border border-neutral-300 dark:border-slate-600 rounded-lg
+                      text-slate-600 dark:text-slate-300 hover:bg-neutral-100 dark:hover:bg-slate-600
                       disabled:opacity-50 disabled:cursor-not-allowed
                       transition-all duration-150
                       focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2
@@ -316,8 +317,8 @@ const AttendanceTable = ({ data = [] }) => {
                     onClick={handleNextPage}
                     disabled={currentPage === totalPages}
                     className="
-                      px-3 py-2 border border-neutral-300 rounded-lg
-                      text-text-secondary hover:bg-neutral-100
+                      px-3 py-2 border border-neutral-300 dark:border-slate-600 rounded-lg
+                      text-slate-600 dark:text-slate-300 hover:bg-neutral-100 dark:hover:bg-slate-600
                       disabled:opacity-50 disabled:cursor-not-allowed
                       transition-all duration-150
                       focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2

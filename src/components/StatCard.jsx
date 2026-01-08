@@ -13,27 +13,27 @@ const StatCard = ({
   colorScheme = 'primary',  // 'primary' | 'success' | 'warning' | 'error'
   trend = null  // { direction: 'up' | 'down', percentage: '12.5', label: '較上月' }
 }) => {
-  // Semantic color mappings based on design system
+  // Semantic color mappings based on design system with dark mode support
   const colorMap = {
     primary: {
-      iconBg: 'bg-primary-50',
-      iconText: 'text-primary-500',
-      valueText: 'text-primary-600'
+      iconBg: 'bg-primary-50 dark:bg-primary-900/30',
+      iconText: 'text-primary-500 dark:text-primary-400',
+      valueText: 'text-primary-600 dark:text-primary-400'
     },
     success: {
-      iconBg: 'bg-success-50',
-      iconText: 'text-success-500',
-      valueText: 'text-success-600'
+      iconBg: 'bg-success-50 dark:bg-success-900/30',
+      iconText: 'text-success-500 dark:text-success-400',
+      valueText: 'text-success-600 dark:text-success-400'
     },
     warning: {
-      iconBg: 'bg-warning-50',
-      iconText: 'text-warning-500',
-      valueText: 'text-warning-600'
+      iconBg: 'bg-warning-50 dark:bg-warning-900/30',
+      iconText: 'text-warning-500 dark:text-warning-400',
+      valueText: 'text-warning-600 dark:text-warning-400'
     },
     error: {
-      iconBg: 'bg-error-50',
-      iconText: 'text-error-500',
-      valueText: 'text-error-600'
+      iconBg: 'bg-error-50 dark:bg-error-900/30',
+      iconText: 'text-error-500 dark:text-error-400',
+      valueText: 'text-error-600 dark:text-error-400'
     }
   };
 
@@ -46,9 +46,9 @@ const StatCard = ({
     >
       <div className="flex items-start justify-between">
         <div className="flex-1">
-          <p className="text-heading-4 text-text-tertiary mb-2">{title}</p>
+          <p className="text-heading-4 text-slate-500 dark:text-slate-400 dark:text-slate-400 mb-2">{title}</p>
           <h3 className={`text-display ${colors.valueText} mb-1 font-bold transition-all duration-300`}>{value}</h3>
-          {subtext && <p className="text-body-small text-neutral-500 mt-1">{subtext}</p>}
+          {subtext && <p className="text-body-small text-neutral-500 dark:text-slate-400 mt-1">{subtext}</p>}
 
           {/* Trend Indicator */}
           {trend && (

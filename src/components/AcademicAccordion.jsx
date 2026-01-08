@@ -13,23 +13,23 @@ const AcademicAccordion = ({ questionnaire }) => {
   if (!content) return null;
 
   return (
-    <div className="academic-accordion mb-6 border border-neutral-200 rounded-lg overflow-hidden">
+    <div className="academic-accordion mb-6 border border-neutral-200 dark:border-slate-700 rounded-lg overflow-hidden">
       {/* Toggle Button */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full px-6 py-4 flex items-center justify-between bg-neutral-50 hover:bg-neutral-100 transition-colors duration-200"
+        className="w-full px-6 py-4 flex items-center justify-between bg-neutral-50 dark:bg-slate-700 hover:bg-neutral-100 dark:hover:bg-slate-600 transition-colors duration-200"
         aria-expanded={isExpanded}
         aria-controls={`academic-content-${questionnaire}`}
       >
         <div className="flex items-center gap-3">
           <BookOpen size={20} className="text-primary-600" />
-          <span className="text-body-large font-medium text-text-primary">
+          <span className="text-body-large font-medium text-slate-900 dark:text-slate-100">
             了解此量表的學術背景與應用
           </span>
         </div>
         <ChevronDown
           size={20}
-          className={`text-text-tertiary transition-transform duration-300 ${
+          className={`text-slate-500 dark:text-slate-400 transition-transform duration-300 ${
             isExpanded ? 'rotate-180' : ''
           }`}
         />
@@ -42,7 +42,7 @@ const AcademicAccordion = ({ questionnaire }) => {
           isExpanded ? 'max-h-[3000px] opacity-100' : 'max-h-0 opacity-0'
         }`}
       >
-        <div className="px-6 py-6 bg-white prose max-w-none">
+        <div className="px-6 py-6 bg-white dark:bg-slate-800 prose prose-slate dark:prose-invert max-w-none text-slate-900 dark:text-slate-100">
           {content}
         </div>
       </div>
@@ -73,7 +73,7 @@ const StanfordAcademicContent = () => (
     <section className="mb-6">
       <h4 className="text-xl font-semibold mb-3">研究背景</h4>
       <p>這是一個真實存在的研究，由 Rohland, Kruse 和 Rohrer 於 2004 年發表於《Stress and Health》期刊。</p>
-      <p className="italic text-sm text-neutral-600 bg-neutral-50 p-3 rounded">
+      <p className="italic text-sm text-neutral-600 dark:text-slate-300 bg-neutral-50 dark:bg-slate-700 p-3 rounded">
         Rohland BM, Kruse GR, Rohrer JE. Validation of a single-item measure of burnout against the Maslach Burnout Inventory among physicians. Stress and Health. 2004;20(2):75-79.
       </p>
     </section>
@@ -132,7 +132,7 @@ const CBIAcademicContent = () => (
     <section className="mb-6">
       <h4 className="text-xl font-semibold mb-3">研究背景</h4>
       <p>由丹麥國家職業環境研究中心（National Research Centre for the Working Environment）的 Kristensen 等人於 2005 年開發。</p>
-      <p className="italic text-sm text-neutral-600 bg-neutral-50 p-3 rounded">
+      <p className="italic text-sm text-neutral-600 dark:text-slate-300 bg-neutral-50 dark:bg-slate-700 p-3 rounded">
         Kristensen TS, Borritz M, Villadsen E, Christensen KB. The Copenhagen Burnout Inventory: A new tool for the assessment of burnout. Work & Stress. 2005;19(3):192-207.
       </p>
     </section>
@@ -214,7 +214,7 @@ const OLBIAcademicContent = () => (
     <section className="mb-6">
       <h4 className="text-xl font-semibold mb-3">研究背景</h4>
       <p>由 Demerouti 和 Bakker 等人於 2003 年開發，基於「工作要求-資源模型」（Job Demands-Resources Model, JD-R Model）。</p>
-      <p className="italic text-sm text-neutral-600 bg-neutral-50 p-3 rounded">
+      <p className="italic text-sm text-neutral-600 dark:text-slate-300 bg-neutral-50 dark:bg-slate-700 p-3 rounded">
         Demerouti E, Bakker AB, Vardakou I, Kantas A. The convergent validity of two burnout instruments: A multitrait-multimethod analysis. European Journal of Psychological Assessment. 2003;19(1):12-23.
       </p>
     </section>
@@ -241,12 +241,12 @@ const OLBIAcademicContent = () => (
         <div>
           <strong>1. 耗竭（Exhaustion）：</strong>
           <p>身體和情緒的極度疲憊感。這是倦怠的核心症狀，反映「工作要求」過高。</p>
-          <p className="text-sm text-neutral-600">對應 JD-R 模型：高工作要求（工作量、時間壓力、環境壓力）導致耗竭。</p>
+          <p className="text-sm text-neutral-600 dark:text-slate-400">對應 JD-R 模型：高工作要求（工作量、時間壓力、環境壓力）導致耗竭。</p>
         </div>
         <div>
           <strong>2. 疏離（Disengagement）：</strong>
           <p>對工作的疏離感、不投入、失去意義感。反映「工作資源」不足。</p>
-          <p className="text-sm text-neutral-600">對應 JD-R 模型：缺乏工作資源（自主權、支持、回饋、成長機會）導致疏離。</p>
+          <p className="text-sm text-neutral-600 dark:text-slate-400">對應 JD-R 模型：缺乏工作資源（自主權、支持、回饋、成長機會）導致疏離。</p>
         </div>
       </div>
     </section>
@@ -254,14 +254,14 @@ const OLBIAcademicContent = () => (
     <section className="mb-6">
       <h4 className="text-xl font-semibold mb-3">JD-R 模型的啟示</h4>
       <p>OLBI 的兩個維度對應 JD-R 模型的核心概念：</p>
-      <div className="bg-primary-50 p-4 rounded-lg mt-3 space-y-2">
+      <div className="bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-800 p-4 rounded-lg mt-3 space-y-2 text-slate-900 dark:text-slate-100">
         <div>
           <strong>高工作要求 → 高耗竭：</strong>
-          <p className="text-sm">工作量大、時間壓力、環境惡劣 → 身心疲憊</p>
+          <p className="text-sm text-slate-700 dark:text-slate-300">工作量大、時間壓力、環境惡劣 → 身心疲憊</p>
         </div>
         <div>
           <strong>低工作資源 → 高疏離：</strong>
-          <p className="text-sm">缺乏自主權、支持、意義感 → 不想投入工作</p>
+          <p className="text-sm text-slate-700 dark:text-slate-300">缺乏自主權、支持、意義感 → 不想投入工作</p>
         </div>
       </div>
       <p className="mt-3"><strong>關鍵洞察：</strong>改善倦怠需要「降低工作要求」和「增加工作資源」雙管齊下。</p>

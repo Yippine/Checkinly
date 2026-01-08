@@ -13,23 +13,23 @@ const EmployeeRiskCard = ({ employee }) => {
       case 'critical':
         return {
           avatar: 'bg-error-100 text-error-700 border-error-200',
-          score: 'text-error-600',
-          border: 'border-error-200',
-          hover: 'hover:bg-error-50'
+          score: 'text-error-600 dark:text-error-400',
+          border: 'border-error-200 dark:border-error-800',
+          hover: 'hover:bg-error-50 dark:hover:bg-error-900/20'
         };
       case 'warning':
         return {
           avatar: 'bg-warning-100 text-warning-700 border-warning-200',
-          score: 'text-warning-600',
-          border: 'border-warning-200',
-          hover: 'hover:bg-warning-50'
+          score: 'text-warning-600 dark:text-warning-400',
+          border: 'border-warning-200 dark:border-warning-800',
+          hover: 'hover:bg-warning-50 dark:hover:bg-warning-900/20'
         };
       default:
         return {
           avatar: 'bg-success-100 text-success-700 border-success-200',
-          score: 'text-success-600',
-          border: 'border-success-200',
-          hover: 'hover:bg-success-50'
+          score: 'text-success-600 dark:text-success-400',
+          border: 'border-success-200 dark:border-success-800',
+          hover: 'hover:bg-success-50 dark:hover:bg-success-900/20'
         };
     }
   };
@@ -52,14 +52,14 @@ const EmployeeRiskCard = ({ employee }) => {
         {/* Employee Info */}
         <div className="flex-1 min-w-0">
           <div className="flex items-baseline justify-between gap-2">
-            <h4 className="text-sm font-semibold text-text-primary truncate">
+            <h4 className="text-sm font-semibold text-slate-900 dark:text-slate-100 truncate">
               {empId}
             </h4>
             <span className={`text-sm font-bold ${colors.score} flex-shrink-0`}>
               {riskScore}
             </span>
           </div>
-          <p className="text-xs text-text-tertiary truncate">
+          <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
             {dept}
           </p>
         </div>
@@ -70,7 +70,7 @@ const EmployeeRiskCard = ({ employee }) => {
         {reasons.map((reason, index) => (
           <div
             key={index}
-            className="text-xs text-text-secondary bg-neutral-50 px-2 py-1 rounded"
+            className="text-xs text-slate-600 dark:text-slate-300 bg-neutral-50 dark:bg-slate-700 px-2 py-1 rounded"
           >
             {reason}
           </div>

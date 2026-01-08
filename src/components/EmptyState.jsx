@@ -16,8 +16,8 @@ const EmptyState = ({
       <div className="w-16 h-16 mb-4 flex items-center justify-center rounded-full bg-neutral-100">
         <IconComponent size={32} className="text-neutral-400" strokeWidth={1.5} />
       </div>
-      <h3 className="text-heading-3 text-text-primary mb-2">{title}</h3>
-      <p className="text-body text-text-tertiary max-w-md mb-4">{message}</p>
+      <h3 className="text-heading-3 text-slate-900 dark:text-slate-100 mb-2">{title}</h3>
+      <p className="text-body text-slate-500 dark:text-slate-400 max-w-md mb-4">{message}</p>
       {action && <div className="mt-2">{action}</div>}
     </div>
   );

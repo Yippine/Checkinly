@@ -32,7 +32,7 @@ const MarkdownText = ({ children }) => {
       // List items
       if (line.trim().startsWith('- ')) {
         listItems.push(
-          <li key={`li-${index}`} className="ml-4">
+          <li key={`li-${index}`} className="ml-4 text-slate-600 dark:text-slate-300">
             {processBold(line.trim().substring(2))}
           </li>
         );
@@ -41,7 +41,7 @@ const MarkdownText = ({ children }) => {
       else if (/^\d+\./.test(line.trim())) {
         const text = line.trim().replace(/^\d+\.\s*/, '');
         listItems.push(
-          <li key={`li-${index}`} className="ml-4">
+          <li key={`li-${index}`} className="ml-4 text-slate-600 dark:text-slate-300">
             {processBold(text)}
           </li>
         );
@@ -51,7 +51,7 @@ const MarkdownText = ({ children }) => {
         // Flush list items if any
         if (listItems.length > 0) {
           elements.push(
-            <ul key={`ul-${index}`} className="list-disc pl-5 mb-3">
+            <ul key={`ul-${index}`} className="list-disc pl-5 mb-3 text-slate-600 dark:text-slate-300">
               {listItems}
             </ul>
           );
@@ -60,7 +60,7 @@ const MarkdownText = ({ children }) => {
 
         if (line.trim()) {
           elements.push(
-            <p key={`p-${index}`} className="mb-3">
+            <p key={`p-${index}`} className="mb-3 text-slate-600 dark:text-slate-300">
               {processBold(line)}
             </p>
           );
@@ -99,31 +99,31 @@ const BurnoutResultFeedback = ({ questionnaire, score, subscales }) => {
   return (
     <Card className="mt-6">
       {/* Overall Score Display */}
-      <div className="text-center mb-8 pb-6 border-b border-neutral-200">
-        <div className="text-sm text-text-tertiary mb-2">您的倦怠分數</div>
+      <div className="text-center mb-8 pb-6 border-b border-neutral-200 dark:border-slate-700">
+        <div className="text-sm text-slate-500 dark:text-slate-400 mb-2">您的倦怠分數</div>
         <div className={`text-6xl font-bold mb-3 ${getScoreColor(feedback.color)}`}>
           {formatScore(score, questionnaire)}
         </div>
         <div className={`inline-block px-4 py-2 rounded-full text-lg font-medium ${getBadgeColor(feedback.color)}`}>
           {feedback.level}
         </div>
-        <p className="mt-4 text-lg text-text-secondary">{feedback.description}</p>
+        <p className="mt-4 text-lg text-slate-600 dark:text-slate-300">{feedback.description}</p>
       </div>
 
       {/* Dynamic Advice Sections */}
       {feedback.adviceList && feedback.adviceList.length > 0 && (
         <div className="space-y-6 mb-8">
-          <h3 className="text-2xl font-semibold text-text-primary flex items-center gap-2">
+          <h3 className="text-2xl font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2">
             <Info size={24} className="text-primary-600" />
             個人化建議
           </h3>
           {feedback.adviceList.map((advice, index) => (
             <div
               key={index}
-              className="bg-neutral-50 border-l-4 border-primary-500 p-6 rounded-r-lg"
+              className="bg-neutral-50 dark:bg-slate-800 border-l-4 border-primary-500 dark:border-primary-600 p-6 rounded-r-lg"
             >
-              <h4 className="text-xl font-semibold mb-3">{advice.title}</h4>
-              <div className="text-text-secondary">
+              <h4 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-3">{advice.title}</h4>
+              <div className="text-slate-600 dark:text-slate-300">
                 <MarkdownText>{advice.content}</MarkdownText>
               </div>
             </div>
@@ -133,7 +133,7 @@ const BurnoutResultFeedback = ({ questionnaire, score, subscales }) => {
 
       {/* Encouragement Section */}
       {feedback.encouragement && (
-        <div className={`p-6 rounded-lg ${getEncouragementBgColor(feedback.color)}`}>
+        <div className={`p-6 rounded-lg ${getEncouragementBgColor(feedback.color)} ${getEncouragementTextColor(feedback.color)}`}>
           <div className="flex items-start gap-3">
             {getEncouragementIcon(feedback.color)}
             <div className="flex-1">
@@ -227,11 +227,11 @@ function formatScore(score, questionnaire) {
  */
 function getScoreColor(color) {
   const colors = {
-    success: 'text-success-600',
-    warning: 'text-warning-600',
-    error: 'text-error-600'
+    success: 'text-success-600 dark:text-success-400',
+    warning: 'text-warning-600 dark:text-warning-400',
+    error: 'text-error-600 dark:text-error-400'
   };
-  return colors[color] || 'text-neutral-600';
+  return colors[color] || 'text-neutral-600 dark:text-neutral-400';
 }
 
 /**
@@ -239,11 +239,11 @@ function getScoreColor(color) {
  */
 function getBadgeColor(color) {
   const colors = {
-    success: 'bg-success-100 text-success-700',
-    warning: 'bg-warning-100 text-warning-700',
-    error: 'bg-error-100 text-error-700'
+    success: 'bg-success-100 dark:bg-success-900/30 text-success-700 dark:text-success-300',
+    warning: 'bg-warning-100 dark:bg-warning-900/30 text-warning-700 dark:text-warning-300',
+    error: 'bg-error-100 dark:bg-error-900/30 text-error-700 dark:text-error-300'
   };
-  return colors[color] || 'bg-neutral-100 text-neutral-700';
+  return colors[color] || 'bg-neutral-100 dark:bg-slate-700 text-neutral-700 dark:text-neutral-300';
 }
 
 /**
@@ -251,20 +251,32 @@ function getBadgeColor(color) {
  */
 function getEncouragementBgColor(color) {
   const colors = {
-    success: 'bg-success-50 border border-success-200',
-    warning: 'bg-warning-50 border border-warning-200',
-    error: 'bg-error-50 border border-error-200'
+    success: 'bg-success-50 dark:bg-success-900/20 border border-success-200 dark:border-success-800',
+    warning: 'bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800',
+    error: 'bg-error-50 dark:bg-error-900/20 border border-error-200 dark:border-error-800'
   };
-  return colors[color] || 'bg-neutral-50 border border-neutral-200';
+  return colors[color] || 'bg-neutral-50 dark:bg-slate-800 border border-neutral-200 dark:border-slate-700';
+}
+
+/**
+ * Get text color for encouragement section based on background color
+ */
+function getEncouragementTextColor(color) {
+  const colors = {
+    success: 'text-success-700 dark:text-success-300',
+    warning: 'text-warning-700 dark:text-warning-300',
+    error: 'text-error-700 dark:text-error-300'
+  };
+  return colors[color] || 'text-slate-700 dark:text-slate-300';
 }
 
 /**
  * Get encouragement icon based on color
  */
 function getEncouragementIcon(color) {
-  const iconClass = color === 'success' ? 'text-success-600' :
-                   color === 'warning' ? 'text-warning-600' :
-                   color === 'error' ? 'text-error-600' : 'text-neutral-600';
+  const iconClass = color === 'success' ? 'text-success-600 dark:text-success-400' :
+                   color === 'warning' ? 'text-warning-600 dark:text-warning-400' :
+                   color === 'error' ? 'text-error-600 dark:text-error-400' : 'text-neutral-600 dark:text-neutral-400';
 
   const Icon = color === 'success' ? CheckCircle :
                color === 'warning' ? AlertTriangle :

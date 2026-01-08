@@ -38,6 +38,7 @@ export default function App() {
   const [error, setError] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('dashboard'); // RouteSystem: State(activeTab)
+  const [darkMode, setDarkMode] = useState(false); // DarkMode: State(darkMode)
 
   // Ant Design Pro Color Palette
   const COLORS = ['#1890ff', '#52c41a', '#faad14', '#f5222d', '#722ed1', '#eb2f96'];
@@ -53,6 +54,25 @@ export default function App() {
         setError("系統組件載入失敗，請檢查網路連線或重新整理頁面。");
       });
   }, []);
+
+  // --- Dark Mode Initialization ---
+  useEffect(() => {
+    // Load theme from localStorage
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initialDark = savedTheme === 'dark' || (savedTheme === null && prefersDark);
+
+    setDarkMode(initialDark);
+    document.documentElement.classList.toggle('dark', initialDark);
+  }, []);
+
+  // --- Dark Mode Toggle Handler ---
+  const toggleDarkMode = () => {
+    const newMode = !darkMode;
+    setDarkMode(newMode);
+    document.documentElement.classList.toggle('dark', newMode);
+    localStorage.setItem('theme', newMode ? 'dark' : 'light');
+  };
 
   // --- File Handling Logic ---
 
@@ -88,10 +108,10 @@ export default function App() {
   // --- Render ---
 
   return (
-    <div className="min-h-screen bg-neutral-50 font-sans">
+    <div className="min-h-screen bg-neutral-50 dark:bg-slate-900 font-sans transition-colors duration-200">
       <GlobalLoader isLoading={loading} />
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} activeTab={activeTab} setActiveTab={setActiveTab} />
-      <Header fileName={fileName} onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
+      <Header fileName={fileName} onMenuClick={() => setSidebarOpen(!sidebarOpen)} darkMode={darkMode} onToggleDarkMode={toggleDarkMode} />
 
       {/* Health Weather Bar - Only show when data is available and in dashboard view */}
       {data && stats && activeTab === 'dashboard' && (
@@ -111,8 +131,8 @@ export default function App() {
         <div className="mb-6 sm:mb-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
             <div>
-              <h1 className="text-heading-1 text-text-primary font-bold mb-2">工時分析儀表板</h1>
-              <p className="text-body text-text-secondary">
+              <h1 className="text-heading-1 text-slate-900 dark:text-slate-100 font-bold mb-2">工時分析儀表板</h1>
+              <p className="text-body text-slate-600 dark:text-slate-300">
                 {fileName ? `當前資料：${fileName}` : '請上傳出勤明細表開始分析'}
               </p>
             </div>
@@ -120,7 +140,7 @@ export default function App() {
               <label className={`inline-flex items-center px-5 py-2.5 rounded-lg transition-all duration-200 font-medium text-sm shadow-sm ${
                 libsLoaded && !loading
                   ? 'bg-primary-500 hover:bg-primary-600 text-white cursor-pointer hover:shadow-md hover:-translate-y-0.5 focus-within:ring-2 focus-within:ring-primary-500 focus-within:ring-offset-2'
-                  : 'bg-neutral-200 text-neutral-400 cursor-not-allowed opacity-50'
+                  : 'bg-neutral-200 dark:bg-slate-700 text-neutral-400 dark:text-slate-500 cursor-not-allowed opacity-50'
               }`}>
                 <Upload size={18} className="mr-2" strokeWidth={2.5} />
                 {loading ? '解析中...' : data ? '重新上傳' : '上傳資料'}
@@ -136,7 +156,7 @@ export default function App() {
               {data && (
                 <button
                   onClick={() => { setData(null); setFileName(''); }}
-                  className="px-5 py-2.5 rounded-lg text-sm font-medium text-error-600 bg-error-50 hover:bg-error-100 border border-error-200 hover:border-error-300 transition-all duration-200 flex items-center gap-2 shadow-sm hover:shadow-md hover:-translate-y-0.5"
+                  className="px-5 py-2.5 rounded-lg text-sm font-medium text-error-600 dark:text-error-400 bg-error-50 dark:bg-error-900/20 hover:bg-error-100 dark:hover:bg-error-900/30 border border-error-200 dark:border-error-800 hover:border-error-300 dark:hover:border-error-700 transition-all duration-200 flex items-center gap-2 shadow-sm hover:shadow-md hover:-translate-y-0.5"
                 >
                   <XCircle size={18} strokeWidth={2.5} /> 清除
                 </button>
@@ -144,7 +164,7 @@ export default function App() {
             </div>
           </div>
           {error && (
-            <div className="p-4 bg-error-50 border border-error-200 text-error-700 rounded-lg flex items-center gap-3 text-sm shadow-sm animate-fade-in">
+            <div className="p-4 bg-error-50 dark:bg-error-900/20 border border-error-200 dark:border-error-800 text-error-700 dark:text-error-400 rounded-lg flex items-center gap-3 text-sm shadow-sm animate-fade-in">
               <AlertCircle size={20} strokeWidth={2.5} className="flex-shrink-0" />
               <span>{error}</span>
             </div>
@@ -181,23 +201,23 @@ export default function App() {
                 <ChartSkeleton title="出勤狀態分布" height="h-64" />
                 <Card>
                   <div className="space-y-4">
-                    <h3 className="text-heading-3 text-text-primary font-semibold flex items-center gap-2">
+                    <h3 className="text-heading-3 text-slate-900 dark:text-slate-100 font-semibold flex items-center gap-2">
                       <Lightbulb size={20} className="text-warning-500" strokeWidth={2.5} />
                       智慧建議
                     </h3>
                     <div className="space-y-3">
                       <div className="flex items-start gap-3">
-                        <div className="w-5 h-5 rounded-full bg-neutral-200 animate-pulse flex-shrink-0 mt-0.5"></div>
+                        <div className="w-5 h-5 rounded-full bg-neutral-200 dark:bg-slate-700 animate-pulse flex-shrink-0 mt-0.5"></div>
                         <div className="flex-1 space-y-2">
-                          <div className="h-4 bg-neutral-200 rounded animate-pulse w-full"></div>
-                          <div className="h-4 bg-neutral-200 rounded animate-pulse w-3/4"></div>
+                          <div className="h-4 bg-neutral-200 dark:bg-slate-700 rounded animate-pulse w-full"></div>
+                          <div className="h-4 bg-neutral-200 dark:bg-slate-700 rounded animate-pulse w-3/4"></div>
                         </div>
                       </div>
                       <div className="flex items-start gap-3">
-                        <div className="w-5 h-5 rounded-full bg-neutral-200 animate-pulse flex-shrink-0 mt-0.5"></div>
+                        <div className="w-5 h-5 rounded-full bg-neutral-200 dark:bg-slate-700 animate-pulse flex-shrink-0 mt-0.5"></div>
                         <div className="flex-1 space-y-2">
-                          <div className="h-4 bg-neutral-200 rounded animate-pulse w-full"></div>
-                          <div className="h-4 bg-neutral-200 rounded animate-pulse w-2/3"></div>
+                          <div className="h-4 bg-neutral-200 dark:bg-slate-700 rounded animate-pulse w-full"></div>
+                          <div className="h-4 bg-neutral-200 dark:bg-slate-700 rounded animate-pulse w-2/3"></div>
                         </div>
                       </div>
                     </div>
@@ -209,16 +229,16 @@ export default function App() {
             {/* Empty State Message */}
             <Card>
               <div className="text-center py-16">
-                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary-100 to-primary-50 flex items-center justify-center mx-auto mb-6 shadow-lg">
-                  <FileText size={36} className="text-primary-500" strokeWidth={2.5} />
+                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary-100 to-primary-50 dark:from-primary-900/30 dark:to-primary-800/20 flex items-center justify-center mx-auto mb-6 shadow-lg dark:shadow-slate-900/50">
+                  <FileText size={36} className="text-primary-500 dark:text-primary-400" strokeWidth={2.5} />
                 </div>
-                <h3 className="text-heading-2 text-text-primary font-bold mb-3">準備開始分析</h3>
-                <p className="text-body text-text-secondary mb-6 max-w-md mx-auto leading-relaxed">
+                <h3 className="text-heading-2 text-slate-900 dark:text-slate-100 font-bold mb-3">準備開始分析</h3>
+                <p className="text-body text-slate-600 dark:text-slate-300 mb-6 max-w-md mx-auto leading-relaxed">
                   請點擊上方「上傳資料」按鈕，選擇 CSV 或 Excel (.xlsx) 格式的出勤明細表。<br/>
                   系統將自動識別部門、員工、日期與工時資料。
                 </p>
-                <div className="inline-block px-6 py-3 bg-neutral-50 border border-neutral-200 rounded-lg">
-                  <p className="text-xs text-text-tertiary">
+                <div className="inline-block px-6 py-3 bg-neutral-50 dark:bg-slate-800 border border-neutral-200 dark:border-slate-700 rounded-lg">
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
                     💡 支援格式：部門名稱、員工編號、日期、實到工時、加班紀錄、遲到早退
                   </p>
                 </div>
@@ -285,35 +305,35 @@ export default function App() {
                 {/* Trend Chart - Enhanced with design system colors */}
                 <Card animated={true}>
                   <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-heading-3 text-text-primary flex items-center gap-2 font-semibold">
-                      <Calendar size={18} className="text-text-tertiary" strokeWidth={2} />
+                    <h3 className="text-heading-3 text-slate-900 dark:text-slate-100 dark:text-slate-100 flex items-center gap-2 font-semibold">
+                      <Calendar size={18} className="text-slate-500 dark:text-slate-400 dark:text-slate-400" strokeWidth={2} />
                       每日出勤趨勢分析
                     </h3>
                   </div>
                   <div className="h-64 sm:h-80 w-full">
                     <ResponsiveContainer width="100%" height="100%">
                       <LineChart data={stats.trendChartData}>
-                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e8e8e8" />
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={darkMode ? '#334155' : '#e8e8e8'} />
                         <XAxis
                           dataKey="date"
-                          stroke="#d9d9d9"
-                          tick={{fontSize: 11, fill: 'rgba(0,0,0,0.45)'}}
+                          stroke={darkMode ? '#475569' : '#d9d9d9'}
+                          tick={{fontSize: 11, fill: darkMode ? '#94a3b8' : 'rgba(0,0,0,0.45)'}}
                           angle={-45}
                           textAnchor="end"
                           height={60}
                         />
-                        <YAxis stroke="#d9d9d9" tick={{fontSize: 11, fill: 'rgba(0,0,0,0.45)'}} />
+                        <YAxis stroke={darkMode ? '#475569' : '#d9d9d9'} tick={{fontSize: 11, fill: darkMode ? '#94a3b8' : 'rgba(0,0,0,0.45)'}} />
                         <RechartsTooltip
                           contentStyle={{
                             borderRadius: '6px',
-                            border: '1px solid #e8e8e8',
+                            border: darkMode ? '1px solid #475569' : '1px solid #e8e8e8',
                             boxShadow: '0 3px 6px -4px rgba(0,0,0,0.12), 0 6px 16px 0 rgba(0,0,0,0.08)',
-                            backgroundColor: '#ffffff',
+                            backgroundColor: darkMode ? '#1e293b' : '#ffffff',
                             padding: '12px',
-                            color: 'rgba(0,0,0,0.85)'
+                            color: darkMode ? '#f1f5f9' : 'rgba(0,0,0,0.85)'
                           }}
                         />
-                        <Legend wrapperStyle={{fontSize: '12px', color: 'rgba(0,0,0,0.65)'}} />
+                        <Legend wrapperStyle={{fontSize: '12px', color: darkMode ? '#cbd5e1' : 'rgba(0,0,0,0.65)'}} />
                         <Line
                           type="monotone"
                           dataKey="hours"
@@ -346,29 +366,29 @@ export default function App() {
                 {/* Department Bar Chart - Enhanced with design system colors */}
                 <Card animated={true}>
                   <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-heading-3 text-text-primary flex items-center gap-2 font-semibold">
-                      <Users size={18} className="text-text-tertiary" strokeWidth={2} />
+                    <h3 className="text-heading-3 text-slate-900 dark:text-slate-100 dark:text-slate-100 flex items-center gap-2 font-semibold">
+                      <Users size={18} className="text-slate-500 dark:text-slate-400 dark:text-slate-400" strokeWidth={2} />
                       部門工時與加班排行
                     </h3>
                   </div>
                   <div className="h-64 sm:h-80 w-full">
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart data={stats.deptChartData} layout="vertical" margin={{ left: 40 }}>
-                        <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="#e8e8e8" />
-                        <XAxis type="number" stroke="#d9d9d9" tick={{fontSize: 11, fill: 'rgba(0,0,0,0.45)'}} />
-                        <YAxis dataKey="name" type="category" width={80} stroke="#d9d9d9" tick={{fontSize: 11, fill: 'rgba(0,0,0,0.65)'}} />
+                        <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke={darkMode ? '#334155' : '#e8e8e8'} />
+                        <XAxis type="number" stroke={darkMode ? '#475569' : '#d9d9d9'} tick={{fontSize: 11, fill: darkMode ? '#94a3b8' : 'rgba(0,0,0,0.45)'}} />
+                        <YAxis dataKey="name" type="category" width={80} stroke={darkMode ? '#475569' : '#d9d9d9'} tick={{fontSize: 11, fill: darkMode ? '#cbd5e1' : 'rgba(0,0,0,0.65)'}} />
                         <RechartsTooltip
                           cursor={{fill: 'rgba(24,144,255,0.05)'}}
                           contentStyle={{
                             borderRadius: '6px',
-                            border: '1px solid #e8e8e8',
+                            border: darkMode ? '1px solid #475569' : '1px solid #e8e8e8',
                             boxShadow: '0 3px 6px -4px rgba(0,0,0,0.12), 0 6px 16px 0 rgba(0,0,0,0.08)',
-                            backgroundColor: '#ffffff',
+                            backgroundColor: darkMode ? '#1e293b' : '#ffffff',
                             padding: '12px',
-                            color: 'rgba(0,0,0,0.85)'
+                            color: darkMode ? '#f1f5f9' : 'rgba(0,0,0,0.85)'
                           }}
                         />
-                        <Legend wrapperStyle={{fontSize: '12px', color: 'rgba(0,0,0,0.65)'}} />
+                        <Legend wrapperStyle={{fontSize: '12px', color: darkMode ? '#cbd5e1' : 'rgba(0,0,0,0.65)'}} />
                         <Bar
                           dataKey="hours"
                           name="正常工時"
@@ -399,8 +419,8 @@ export default function App() {
                 {/* INC-004: Mood Index Charts - Only show when mood data is available */}
                 {stats.hasMoodData && (
                   <>
-                    <MoodTrendChart data={stats.moodTrendData} />
-                    <DepartmentMoodChart data={stats.deptMoodData} />
+                    <MoodTrendChart data={stats.moodTrendData} darkMode={darkMode} />
+                    <DepartmentMoodChart data={stats.deptMoodData} darkMode={darkMode} />
                   </>
                 )}
               </div>
@@ -414,16 +434,16 @@ export default function App() {
                 )}
 
                 {/* Smart Suggestion Card - Enhanced with gradient background and icons */}
-                <Card className="bg-gradient-to-br from-primary-50 to-secondary-50 border-primary-200" animated={true}>
-                  <h3 className="text-heading-3 text-text-primary mb-4 flex items-center gap-2 font-semibold">
-                    <Lightbulb size={20} className="text-warning-500" strokeWidth={2} />
+                <Card className="bg-gradient-to-br from-primary-50 to-secondary-50 dark:from-primary-900/20 dark:to-secondary-900/20 border-primary-200 dark:border-primary-800" animated={true}>
+                  <h3 className="text-heading-3 text-slate-900 dark:text-slate-100 dark:text-slate-100 mb-4 flex items-center gap-2 font-semibold">
+                    <Lightbulb size={20} className="text-warning-500 dark:text-warning-400" strokeWidth={2} />
                     智慧分析建議
                   </h3>
                   <div className="space-y-2">
                     {stats.suggestions.map((sugg, idx) => (
-                      <div key={idx} className="flex items-start gap-2 p-2 rounded transition-colors duration-200 hover:bg-white/50">
-                        <CheckCircle2 size={16} className="text-success-500 mt-0.5 shrink-0" strokeWidth={2} />
-                        <span className="text-body text-text-secondary leading-relaxed">{sugg.text}</span>
+                      <div key={idx} className="flex items-start gap-2 p-2 rounded transition-colors duration-200 hover:bg-white/50 dark:hover:bg-slate-700/50">
+                        <CheckCircle2 size={16} className="text-success-500 dark:text-success-400 mt-0.5 shrink-0" strokeWidth={2} />
+                        <span className="text-body text-slate-600 dark:text-slate-300 dark:text-slate-300 leading-relaxed">{sugg.text}</span>
                       </div>
                     ))}
                   </div>
@@ -436,7 +456,7 @@ export default function App() {
 
                 {/* Status Pie Chart - Enhanced with design system colors */}
                 <Card animated={true}>
-                  <h3 className="text-heading-3 text-text-primary mb-4 font-semibold">出勤狀態分佈</h3>
+                  <h3 className="text-heading-3 text-slate-900 dark:text-slate-100 dark:text-slate-100 mb-4 font-semibold">出勤狀態分佈</h3>
                   <div className="h-64 sm:h-72 w-full relative">
                     <ResponsiveContainer width="100%" height="100%">
                       <PieChart>
@@ -457,37 +477,37 @@ export default function App() {
                         <RechartsTooltip
                           contentStyle={{
                             borderRadius: '6px',
-                            border: '1px solid #e8e8e8',
+                            border: darkMode ? '1px solid #475569' : '1px solid #e8e8e8',
                             boxShadow: '0 3px 6px -4px rgba(0,0,0,0.12), 0 6px 16px 0 rgba(0,0,0,0.08)',
-                            backgroundColor: '#ffffff',
+                            backgroundColor: darkMode ? '#1e293b' : '#ffffff',
                             padding: '12px',
-                            color: 'rgba(0,0,0,0.85)'
+                            color: darkMode ? '#f1f5f9' : 'rgba(0,0,0,0.85)'
                           }}
                         />
-                        <Legend verticalAlign="bottom" height={40} wrapperStyle={{fontSize: '11px', color: 'rgba(0,0,0,0.65)'}} />
+                        <Legend verticalAlign="bottom" height={40} wrapperStyle={{fontSize: '11px', color: darkMode ? '#cbd5e1' : 'rgba(0,0,0,0.65)'}} />
                       </PieChart>
                     </ResponsiveContainer>
                     <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none pb-10">
-                       <div className="text-3xl font-bold text-text-primary">{stats.pieData.reduce((a,b)=>a+b.value,0)}</div>
-                       <div className="text-xs text-text-tertiary mt-1">總人次</div>
+                       <div className="text-3xl font-bold text-slate-900 dark:text-slate-100 dark:text-slate-100">{stats.pieData.reduce((a,b)=>a+b.value,0)}</div>
+                       <div className="text-xs text-slate-500 dark:text-slate-400 dark:text-slate-400 mt-1">總人次</div>
                     </div>
                   </div>
                 </Card>
 
                 {/* Top OT List (Mini Table) - Enhanced with design system styles */}
                 <Card animated={true}>
-                  <h3 className="text-heading-3 text-text-primary mb-4 font-semibold">加班 Top 5 員工</h3>
-                  <div className="overflow-x-auto rounded-lg border border-neutral-200">
+                  <h3 className="text-heading-3 text-slate-900 dark:text-slate-100 dark:text-slate-100 mb-4 font-semibold">加班 Top 5 員工</h3>
+                  <div className="overflow-x-auto rounded-lg border border-neutral-200 dark:border-slate-700 dark:border-slate-700">
                     <table className="min-w-full">
-                      <thead className="bg-neutral-50">
+                      <thead className="bg-neutral-50 dark:bg-slate-700">
                         <tr>
-                          <th className="py-3 px-4 text-left text-heading-4 text-text-secondary border-b-2 border-neutral-200">#</th>
-                          <th className="py-3 px-4 text-left text-heading-4 text-text-secondary border-b-2 border-neutral-200">部門</th>
-                          <th className="py-3 px-4 text-left text-heading-4 text-text-secondary border-b-2 border-neutral-200">員工</th>
-                          <th className="py-3 px-4 text-right text-heading-4 text-text-secondary border-b-2 border-neutral-200">時數</th>
+                          <th className="py-3 px-4 text-left text-heading-4 text-slate-600 dark:text-slate-300 dark:text-slate-300 border-b-2 border-neutral-200 dark:border-slate-700 dark:border-slate-600">#</th>
+                          <th className="py-3 px-4 text-left text-heading-4 text-slate-600 dark:text-slate-300 dark:text-slate-300 border-b-2 border-neutral-200 dark:border-slate-700 dark:border-slate-600">部門</th>
+                          <th className="py-3 px-4 text-left text-heading-4 text-slate-600 dark:text-slate-300 dark:text-slate-300 border-b-2 border-neutral-200 dark:border-slate-700 dark:border-slate-600">員工</th>
+                          <th className="py-3 px-4 text-right text-heading-4 text-slate-600 dark:text-slate-300 dark:text-slate-300 border-b-2 border-neutral-200 dark:border-slate-700 dark:border-slate-600">時數</th>
                         </tr>
                       </thead>
-                      <tbody className="bg-white divide-y divide-neutral-100">
+                      <tbody className="bg-white dark:bg-slate-800 divide-y divide-neutral-100 dark:divide-slate-700">
                         {data
                           .reduce((acc, curr) => {
                              // Group by employee for this table
@@ -499,11 +519,11 @@ export default function App() {
                           .sort((a, b) => b.ot - a.ot)
                           .slice(0, 5)
                           .map((row, i) => (
-                          <tr key={i} className="hover:bg-neutral-50 transition-colors duration-150">
-                            <td className="py-2.5 px-4 text-body-small text-neutral-500 w-12">{i + 1}</td>
-                            <td className="py-2.5 px-4 text-body-small text-neutral-600 truncate max-w-[80px]">{row.dept}</td>
-                            <td className="py-2.5 px-4 text-body text-primary-600 font-medium cursor-pointer hover:text-primary-500">{row.empId}</td>
-                            <td className="py-2.5 px-4 text-right text-body font-semibold text-warning-600">{row.ot.toFixed(1)}</td>
+                          <tr key={i} className="hover:bg-neutral-50 dark:hover:bg-slate-700 transition-colors duration-150">
+                            <td className="py-2.5 px-4 text-body-small text-neutral-500 dark:text-slate-400 w-12">{i + 1}</td>
+                            <td className="py-2.5 px-4 text-body-small text-neutral-600 dark:text-slate-300 truncate max-w-[80px]">{row.dept}</td>
+                            <td className="py-2.5 px-4 text-body text-primary-600 dark:text-primary-400 font-medium cursor-pointer hover:text-primary-500 dark:hover:text-primary-300">{row.empId}</td>
+                            <td className="py-2.5 px-4 text-right text-body font-semibold text-warning-600 dark:text-warning-400">{row.ot.toFixed(1)}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -522,7 +542,7 @@ export default function App() {
 
         {/* Loading Indicator */}
         {!libsLoaded && (
-          <div className="fixed bottom-4 right-4 bg-white border border-warning-200 rounded-lg shadow-card p-3 flex items-center gap-2 text-warning-600">
+          <div className="fixed bottom-4 right-4 bg-white dark:bg-slate-800 border border-warning-200 dark:border-warning-800 rounded-lg shadow-card dark:shadow-slate-900/50 p-3 flex items-center gap-2 text-warning-600 dark:text-warning-400">
             <AlertCircle size={16} />
             <span className="text-body-small">系統組件載入中...</span>
           </div>

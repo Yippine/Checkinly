@@ -15,10 +15,10 @@ const PriorityWatchlist = ({ topRiskEmployees }) => {
   return (
     <Card className="flex flex-col" animated={true}>
       {/* Header */}
-      <div className="flex items-center justify-between mb-4 pb-3 border-b border-neutral-200">
+      <div className="flex items-center justify-between mb-4 pb-3 border-b border-neutral-200 dark:border-slate-700 dark:border-slate-700">
         <div className="flex items-center gap-2">
-          <AlertTriangle size={18} className="text-warning-500" strokeWidth={2} />
-          <h3 className="text-heading-3 text-text-primary font-semibold">
+          <AlertTriangle size={18} className="text-warning-500 dark:text-warning-400" strokeWidth={2} />
+          <h3 className="text-heading-3 text-slate-900 dark:text-slate-100 dark:text-slate-100 font-semibold">
             優先關注名單
           </h3>
         </div>
@@ -49,10 +49,10 @@ const PriorityWatchlist = ({ topRiskEmployees }) => {
           <div className="w-16 h-16 rounded-full bg-success-50 flex items-center justify-center mx-auto mb-3">
             <AlertTriangle size={28} className="text-success-500" strokeWidth={2} />
           </div>
-          <h4 className="text-sm font-semibold text-text-primary mb-1">
+          <h4 className="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-1">
             無高風險員工
           </h4>
-          <p className="text-xs text-text-tertiary">
+          <p className="text-xs text-slate-500 dark:text-slate-400">
             目前所有員工狀態良好
           </p>
         </div>
@@ -60,8 +60,8 @@ const PriorityWatchlist = ({ topRiskEmployees }) => {
 
       {/* Footer Note */}
       {topRiskEmployees.length > 0 && (
-        <div className="mt-4 pt-3 border-t border-neutral-200">
-          <p className="text-xs text-text-tertiary text-center">
+        <div className="mt-4 pt-3 border-t border-neutral-200 dark:border-slate-700">
+          <p className="text-xs text-slate-500 dark:text-slate-400 text-center">
             顯示風險分數最高的 {Math.min(topRiskEmployees.length, 5)} 位員工
           </p>
         </div>

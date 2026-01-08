@@ -4,7 +4,7 @@
 
 const Card = ({ children, className = "", animated = true }) => (
   <div className={`
-    bg-white rounded-lg shadow-card border border-border-light p-6
+    bg-white dark:bg-slate-800 rounded-lg shadow-card dark:shadow-slate-900/50 border border-border-light dark:border-slate-700 p-6
     transition-all duration-200 ease-out
     ${animated ? 'animate-fade-slide-up' : ''}
     hover:shadow-card-hover hover:-translate-y-0.5

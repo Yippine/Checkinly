@@ -37,7 +37,7 @@ const Sidebar = ({ isOpen = true, onClose, activeTab = 'dashboard', setActiveTab
       {/* Sidebar */}
       <aside
         className={`
-          fixed left-0 top-0 h-full w-64 bg-white border-r border-border-light z-modal shadow-drawer
+          fixed left-0 top-0 h-full w-64 bg-white dark:bg-slate-900 border-r border-border-light dark:border-slate-700 z-modal shadow-drawer dark:shadow-slate-900/80
           transition-transform duration-300 ease-ant
           lg:translate-x-0
           ${isOpen ? 'translate-x-0' : '-translate-x-full'}
@@ -48,18 +48,18 @@ const Sidebar = ({ isOpen = true, onClose, activeTab = 'dashboard', setActiveTab
         {/* Close Button (Mobile Only) */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 text-text-tertiary hover:text-text-primary hover:bg-neutral-50 rounded-lg transition-all duration-150 lg:hidden focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+          className="absolute top-4 right-4 p-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:text-slate-100 hover:bg-neutral-50 rounded-lg transition-all duration-150 lg:hidden focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
           aria-label="關閉選單"
         >
           <X size={20} />
         </button>
 
         {/* Logo Header */}
-        <div className="h-16 flex items-center px-6 border-b border-border-light bg-white">
+        <div className="h-16 flex items-center px-6 border-b border-border-light dark:border-slate-700 bg-white dark:bg-slate-900">
           <div className="bg-primary-500 p-2 rounded-lg text-white shadow-sm transition-transform duration-200 hover:scale-110">
             <LayoutDashboard size={18} />
           </div>
-          <h1 className="ml-3 text-base font-semibold text-text-primary">工時分析系統</h1>
+          <h1 className="ml-3 text-base font-semibold text-slate-900 dark:text-slate-100 dark:text-slate-100">工時分析系統</h1>
         </div>
 
         {/* Navigation Items */}
@@ -77,17 +77,17 @@ const Sidebar = ({ isOpen = true, onClose, activeTab = 'dashboard', setActiveTab
                 className={`
                   w-full px-3 py-2 mb-1 flex items-center gap-3 rounded-lg
                   transition-all duration-150 ease-in-out text-sm font-medium
-                  focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2
+                  focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900
                   ${isActive
-                    ? 'bg-primary-50 text-primary-600 font-semibold'
-                    : 'text-text-secondary hover:bg-neutral-50 hover:text-text-primary'
+                    ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 font-semibold'
+                    : 'text-slate-600 dark:text-slate-300 dark:text-slate-400 hover:bg-neutral-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:text-slate-100 dark:hover:text-primary-400'
                   }
                 `}
                 aria-current={isActive ? 'page' : undefined}
               >
                 <Icon
                   size={20}
-                  className={`transition-colors duration-150 ${isActive ? 'text-primary-500' : 'text-text-tertiary'}`}
+                  className={`transition-colors duration-150 ${isActive ? 'text-primary-500' : 'text-slate-500 dark:text-slate-400'}`}
                 />
                 <span className="flex-1 text-left">{item.label}</span>
                 {item.badge && (
@@ -101,14 +101,14 @@ const Sidebar = ({ isOpen = true, onClose, activeTab = 'dashboard', setActiveTab
         </nav>
 
       {/* Bottom Section (Optional) */}
-      <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-border-light">
+      <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-border-light dark:border-slate-700">
         <div className="flex items-center gap-3 px-3 py-2">
           <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white text-xs font-semibold">
             HR
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-text-primary truncate">HR Manager</p>
-            <p className="text-xs text-text-tertiary">系統管理員</p>
+            <p className="text-sm font-medium text-slate-900 dark:text-slate-100 dark:text-slate-100 truncate">HR Manager</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 dark:text-slate-400">系統管理員</p>
           </div>
         </div>
       </div>
